@@ -2,7 +2,7 @@
   <div class="all">
     <div class="content">
       <div class="item" v-for="item in list" :key="item.id">
-        <div class="close-btn" @click="open(item)"></div>
+        <div class="close-btn" @click="close(item)"></div>
         <span v-if="item.show">{{ item.content }}</span>
         <span v-if="!item.show && !item.isadd" @click="add(item)">添加</span>
         <span v-if="item.isadd">添加中ing</span>
@@ -51,10 +51,12 @@ export default {
     }));
   },
   methods: {
-    open(index) {
+    close(index) {
       for (let item of this.list) {
         if (index.id == item.id) {
           item.show = false;
+        }else{
+          item.show = true;
         }
       }
     },

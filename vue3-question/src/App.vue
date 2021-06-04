@@ -1,16 +1,16 @@
 <template>
   <div>
-    <Moitor></Moitor>
+    <Wage></Wage>
   </div>
 </template>
 
 <script>
-import Moitor from '@/components/Monitor.vue'
+import Wage from '@/components/Wage.vue'
 
 export default {
   name: 'App',
   components: {
-    Moitor
+    Wage
   }
 }
 </script>
