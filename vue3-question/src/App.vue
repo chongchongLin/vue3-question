@@ -4,18 +4,19 @@
   </div>
 </template>
 
-<script>
-import Wage from '@/components/Wage.vue'
+<script lang="ts">
+import { Options, Vue } from 'vue-class-component';
+import Wage from './components/Wage.vue';
 
-export default {
-  name: 'App',
+@Options({
   components: {
-    Wage
-  }
-}
+    Wage,
+  },
+})
+export default class App extends Vue {}
 </script>
 
-<style>
+<style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
