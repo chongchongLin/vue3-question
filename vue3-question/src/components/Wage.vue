@@ -65,7 +65,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .container {
   display: flex;
   align-items: center;
