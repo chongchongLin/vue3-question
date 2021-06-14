@@ -51,11 +51,12 @@ export default {
   grid-template-columns: repeat(3, 25%);
   grid-template-rows: repeat(3, 25%);
   grid-gap: 20px 20px;
+
+
   .item {
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid red;
     cursor: pointer;
     border-radius: 12px;
     position: relative;
@@ -69,6 +70,8 @@ export default {
     bottom: 0;
     filter: blur(10px) contrast(0.8);
     z-index: -1;
+    background-image: url("../assets/imgs/re0.png");
+
   }
 }
 </style>
