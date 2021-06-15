@@ -9,7 +9,11 @@
 import { Options, Vue } from 'vue-class-component';
 
 
-export default class App extends Vue {}
+export default class App extends Vue {
+  mounted(){
+    document.dispatchEvent(new Event('render-event'))
+  }
+}
 </script>
 
 <style lang="scss">

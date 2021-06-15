@@ -1,7 +1,7 @@
-import { createRouter, createWebHashHistory } from "vue-router";
+import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
 
 const router = createRouter({
-  history: createWebHashHistory(), // hash模式：createWebHashHistory，history模式：createWebHistory
+  history: createWebHistory(), // hash模式：createWebHashHistory，history模式：createWebHistory
   routes: [
     {
       path: "/",
@@ -13,7 +13,7 @@ const router = createRouter({
       component: () =>
         import(/* webpackChunkName: "home" */ "@/views/Home.vue"),
       meta: {
-        title:'小林玩具库',
+        title: '首页',
         index: 1,
       },
     },
@@ -23,19 +23,25 @@ const router = createRouter({
       component: () =>
         import(/* webpackChunkName: "home" */ "@/components/Wage.vue"),
       meta: {
+        title: '工资计算器',
         index: 1,
       },
     },
     {
-        path: "/monitor",
-        name: "monitor",
-        component: () =>
-          import(/* webpackChunkName: "home" */ "@/components/Monitor.vue"),
-        meta: {
-          index: 1,
-        },
+      path: "/monitor",
+      name: "monitor",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/components/Monitor.vue"),
+      meta: {
+        index: 1,
       },
+    },
   ],
 });
-
+router.beforeEach((to, from, next) => {
+  if (to.meta.title) {
+    document.title = `${to.meta.title} | 小林玩具库`;
+  }
+  next();
+});
 export default router;
