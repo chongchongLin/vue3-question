@@ -36,6 +36,7 @@ const router = createRouter({
         index: 1,
       },
     },
+
   ],
 });
 router.beforeEach((to, from, next) => {

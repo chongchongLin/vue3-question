@@ -52,7 +52,6 @@ export default {
   grid-template-rows: repeat(3, 25%);
   grid-gap: 20px 20px;
 
-
   .item {
     display: flex;
     align-items: center;
@@ -60,6 +59,7 @@ export default {
     cursor: pointer;
     border-radius: 12px;
     position: relative;
+    z-index: 1;
   }
   .item::before {
     content: "";

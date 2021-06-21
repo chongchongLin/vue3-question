@@ -1,16 +1,30 @@
 <template>
   <div id="app">
+    <nav-header></nav-header>
     <router-view class="router-view"> </router-view>
   </div>
 </template>
 
 <script lang="ts">
-import { reactive, onMounted, toRefs, h, getCurrentInstance } from "vue";
-
+import {
+  reactive,
+  onMounted,
+  toRefs,
+  h,
+  getCurrentInstance,
+  computed,
+  ref,
+  toRaw,
+} from "vue";
+import navHeader from "@/components/Header.vue";
 export default {
+  components: {
+    navHeader,
+  },
   setup() {
     const state = reactive({
       date: [],
+      count: 1,
       dateName: [
         { name: "凌晨", start: 1, end: 4 },
         { name: "早上", start: 5, end: 10 },
@@ -27,7 +41,12 @@ export default {
     });
     const init = () => {
       getTime();
+      let res = calcul.value;
+      console.log(toRaw(res));
     };
+    const calcul = computed(() => {
+      return state.dateName;
+    });
     const getTime = () => {
       let hour = new Date().getHours();
       let timeArr = state.dateName.map((item) => item.start);
@@ -51,17 +70,14 @@ export default {
         return findIndex(low, high, arr, val);
       }
     };
-    const open = (word:string) => {
+    const open = (word: string) => {
       const {
         $notify,
       } = getCurrentInstance().appContext.config.globalProperties;
       $notify({
         title: "友情提示",
-        message: h(
-          "span",
-          { style: "color: teal" },
-          `Hey,现在是${word}了`
-        ),
+        message: h("span", { style: "color: teal" }, `Hey,现在是${word}了`),
+     
       });
     };
     return {
@@ -76,15 +92,11 @@ html,
 body {
   height: 100%;
   overflow-x: hidden;
+  background: #f4f5f5;
   // overflow-y: scroll;
 }
 #app {
   height: 100%;
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  // text-align: center;
-  color: #2c3e50;
 }
 .router-view {
   width: 100%;
@@ -92,7 +104,8 @@ body {
   position: absolute;
   top: 0;
   bottom: 0;
-  margin: 0 auto;
+  margin: 74px auto;
   -webkit-overflow-scrolling: touch;
 }
+
 </style>
