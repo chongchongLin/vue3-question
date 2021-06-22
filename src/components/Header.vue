@@ -1,6 +1,6 @@
 <template>
   <div class="header-container">
-    <span class="title">技术改变生活</span>
+    <span class="title" @click="returnHome()">技术改变生活</span>
     <div class="tag">
       <a href="https://github.com/chongchongLin">
         <svg class="icon" aria-hidden="true">
@@ -13,10 +13,22 @@
 </template>
 
 <script>
-export default {};
+import { useRouter } from "vue-router";
+
+export default {
+  setup() {
+    const router = useRouter();
+    const returnHome = () => {
+      router.push({ path: "./home" });
+    };
+    return {
+      returnHome,
+    };
+  },
+};
 </script>
 
-<style lang="scss" scoped >
+<style lang="scss" scoped>
 .header-container {
   width: 100%;
   height: 60px;
@@ -30,8 +42,9 @@ export default {};
   box-sizing: border-box;
   padding: 24px;
 }
-.title{
+.title {
   color: #999;
+  cursor: pointer;
 }
 .tag {
   display: flex;
@@ -40,7 +53,7 @@ export default {};
   justify-content: center;
   position: absolute;
   right: 24px;
-  a{
+  a {
     color: #000;
     text-decoration: none;
   }
@@ -50,7 +63,7 @@ export default {};
     fill: currentColor;
     overflow: hidden;
   }
-  span{
+  span {
     color: #999;
     font-size: 14px;
   }
