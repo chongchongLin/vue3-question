@@ -2,6 +2,7 @@
   <div id="app">
     <nav-header></nav-header>
     <router-view class="router-view"> </router-view>
+    <web-footer></web-footer>
   </div>
 </template>
 
@@ -17,9 +18,11 @@ import {
   toRaw,
 } from "vue";
 import navHeader from "@/components/Header.vue";
+import webFooter from "@/components/Footer.vue";
 export default {
   components: {
     navHeader,
+    webFooter,
   },
   setup() {
     const state = reactive({
@@ -77,7 +80,6 @@ export default {
       $notify({
         title: "友情提示",
         message: h("span", { style: "color: teal" }, `Hey,现在是${word}了`),
-     
       });
     };
     return {
@@ -90,22 +92,22 @@ export default {
 <style lang="scss">
 html,
 body {
-  height: 100%;
+  min-height: 100%;
   overflow-x: hidden;
   background: #f4f5f5;
   // overflow-y: scroll;
 }
 #app {
-  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .router-view {
   width: 100%;
-  height: auto;
-  position: absolute;
+  min-height: calc(100vh - 70px);
+  // position: absolute;
   top: 0;
   bottom: 0;
   margin: 74px auto;
   -webkit-overflow-scrolling: touch;
 }
-
 </style>

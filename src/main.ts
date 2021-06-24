@@ -7,4 +7,3 @@ import '@/assets/iconfont/iconfont.js'
 const app = createApp(App)
 app.use(ElementPlus).use(router)
 app.mount('#app')
-
