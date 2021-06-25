@@ -9,9 +9,9 @@ export default {};
 </script>
 
 <style lang='scss' scoped>
+@import "@/common/mixin.scss";
 .container {
-  width: 100%;
-  height: 50px;
+  @include wh(100%, 50px);
   display: flex;
   align-items: center;
   justify-content: center;
