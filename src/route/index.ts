@@ -36,7 +36,15 @@ const router = createRouter({
         index: 1,
       },
     },
-
+    {
+      path: "/verify-code",
+      name: "verify-code",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/components/VerifyCode.vue"),
+      meta: {
+        index: 1,
+      },
+    },
   ],
 });
 router.beforeEach((to, from, next) => {

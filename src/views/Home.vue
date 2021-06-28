@@ -30,6 +30,11 @@ export default {
           name: "工资计算器",
           id: 1,
         },
+        {
+          path: "/verify-code",
+          name: "图形验证码",
+          id: 3,
+        },
       ],
     });
     const showComponent = (pathCtn) => {
@@ -71,7 +76,6 @@ export default {
     filter: blur(10px) contrast(0.8);
     z-index: -1;
     background-image: url("../assets/imgs/re0.png");
-
   }
 }
 </style>
