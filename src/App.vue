@@ -80,6 +80,7 @@ export default {
       $notify({
         title: "友情提示",
         message: h("span", { style: "color: teal" }, `Hey,现在是${word}了`),
+        duration:1000
       });
     };
     return {
