@@ -21,7 +21,7 @@ const router = createRouter({
       path: "/wage",
       name: "wage",
       component: () =>
-        import(/* webpackChunkName: "home" */ "@/components/Wage.vue"),
+        import(/* webpackChunkName: "wage" */ "@/components/Wage.vue"),
       meta: {
         title: '工资计算器',
         index: 1,
@@ -31,7 +31,7 @@ const router = createRouter({
       path: "/monitor",
       name: "monitor",
       component: () =>
-        import(/* webpackChunkName: "home" */ "@/components/Monitor.vue"),
+        import(/* webpackChunkName: "monitor" */ "@/components/Monitor.vue"),
       meta: {
         index: 1,
       },
@@ -40,7 +40,16 @@ const router = createRouter({
       path: "/verify-code",
       name: "verify-code",
       component: () =>
-        import(/* webpackChunkName: "home" */ "@/components/VerifyCode.vue"),
+        import(/* webpackChunkName: "verify-code" */ "@/components/VerifyCode.vue"),
+      meta: {
+        index: 1,
+      },
+    },
+    {
+      path: "/grid",
+      name: "grid",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/components/Grid.vue"),
       meta: {
         index: 1,
       },

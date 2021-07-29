@@ -35,6 +35,11 @@ export default {
           name: "图形验证码",
           id: 3,
         },
+        {
+          path: "/grid",
+          name: "宫格切换",
+          id: 3,
+        },
       ],
     });
     const showComponent = (pathCtn) => {
