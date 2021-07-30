@@ -12,14 +12,26 @@
     </div>
     <div class="bottom-container">
       <div class="color-list">
-        <div class="color-item" :style="{'background':item}" v-for="item in colorLists" :key="item" @click="selectColor(item)"></div>
+        <div
+          class="color-item"
+          draggable="true"
+          :style="{ background: item }"
+          v-for="item in colorLists"
+          :key="item"
+          @click="selectColor(item)"
+          @dragstart="handleDragStart($event, item)"
+          @dragover.prevent="handleDragOver($event, item)"
+          @dragenter="handleDragEnter($event, item)"
+          @dragend="handleDragEnd($event, item)"
+        ></div>
       </div>
       <div class="grid-box" :class="[gridMode]">
         <div
+          :ref="(el) => (domlist[index] = el)"
           class="grid-box-item"
-          v-for="item in gridList"
+          v-for="(item, index) in gridList"
           :key="item"
-           :style="{'background':item.color}"
+          :style="{ background: item.color }"
           :class="[{ selected: item.selected }]"
           @click="selectBox(item)"
         >
@@ -31,7 +43,7 @@
 </template>
 
 <script>
-import { reactive, toRefs, onMounted } from "vue";
+import { reactive, toRefs, onMounted, toRaw, ref, watch, nextTick } from "vue";
 
 const colorList = [
   "#f30c0c",
@@ -54,20 +66,38 @@ const btnList = [
 ];
 export default {
   setup() {
+    const domlist = ref([]);
     const state = reactive({
       colorLists: colorList,
       radioList: btnList,
       radio3: "2x2",
       gridList: [],
       gridMode: "",
-      selectId:'',
+      selectId: "",
+      posList:[],
     });
+    const initPos = (doms) => {
+      const domList = toRaw(doms.value);
+      domList.forEach((item)=>{
+        const {x,y,width,height} = item.getBoundingClientRect();
+        state.posList.push({widthRange:`${x}-${x+width}`,HeightRange:`${y}-${y+height}`})
+      })
+      console.log(state.posList)
+    };
     const initList = (num) => {
       let array = [];
       for (let i = 0; i < num; i++) {
-        array.push({ id: i, selected: false,color:''});
+        array.push({ id: i, selected: false, color: "" });
       }
       return array;
+    };
+    const handleDragStart = (e, item) => {};
+    const handleDragOver = (e, item) => {};
+    const handleDragEnter = (e, item) => {};
+    const handleDragEnd = (e, item) => {
+      const {x,y} = e;
+      console.log('x',x)
+      console.log('y',y)
     };
     const selectBox = (item) => {
       state.gridList.forEach((child, index) => {
@@ -80,14 +110,14 @@ export default {
       });
       console.log("list", state.gridList);
     };
-    const selectColor = (color)=>{
-        const id = state.selectId;
-        state.gridList.forEach((item)=>{
-            if(item.id == id){
-                item.color = color;
-            }
-        })
-    }
+    const selectColor = (color) => {
+      const id = state.selectId;
+      state.gridList.forEach((item) => {
+        if (item.id == id) {
+          item.color = color;
+        }
+      });
+    };
     //宫格转换
     const changeGrid = (item) => {
       const { id } = item;
@@ -162,11 +192,19 @@ export default {
     onMounted(() => {
       changeGrid({ id: 0 });
     });
+    nextTick(() => {
+      initPos(domlist);
+    });
     return {
       ...toRefs(state),
       changeGrid,
       selectColor,
       selectBox,
+      handleDragStart,
+      handleDragOver,
+      handleDragEnter,
+      handleDragEnd,
+      domlist,
     };
   },
 };
