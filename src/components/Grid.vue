@@ -74,14 +74,19 @@ export default {
       gridList: [],
       gridMode: "",
       selectId: "",
-      posList:[],
+      posList: [],
     });
     const initPos = (doms) => {
       const domList = toRaw(doms.value);
-      domList.forEach((item)=>{
-        const {x,y,width,height} = item.getBoundingClientRect();
-        state.posList.push({widthRange:`${x}-${x+width}`,HeightRange:`${y}-${y+height}`})
-      })
+      domList.forEach((item) => {
+        const { x, y, width, height } = item.getBoundingClientRect();
+        state.posList.push({
+          maxXRange: `${x + width}`,
+          minXRange: `${x}`,
+          maxYRange: `${y + height}`,
+          minYRange: `${y}`,
+        });
+      });
       console.log(state.posList)
     };
     const initList = (num) => {
@@ -95,9 +100,20 @@ export default {
     const handleDragOver = (e, item) => {};
     const handleDragEnter = (e, item) => {};
     const handleDragEnd = (e, item) => {
-      const {x,y} = e;
-      console.log('x',x)
-      console.log('y',y)
+      const { x, y } = e;
+      let posList = toRaw(state.posList);
+      state.selectId = findIndex(x, y, posList);
+      selectColor(item);
+    };
+    const findIndex = (x, y, arr) => {
+      let res;
+      arr.forEach((item, index) => {
+        const { maxXRange, maxYRange, minXRange, minYRange } = item;
+        if (x < maxXRange && x > minXRange && y < maxYRange && y > minYRange) {
+          res = index;
+        }
+      });
+      return res;
     };
     const selectBox = (item) => {
       state.gridList.forEach((child, index) => {
@@ -108,7 +124,6 @@ export default {
           child.selected = false;
         }
       });
-      console.log("list", state.gridList);
     };
     const selectColor = (color) => {
       const id = state.selectId;
@@ -120,6 +135,7 @@ export default {
     };
     //宫格转换
     const changeGrid = (item) => {
+      state.posList = [];
       const { id } = item;
       let map = new Map([
         [
@@ -188,13 +204,16 @@ export default {
       ]);
       state.gridList = initList(map.get(`${id}`).length);
       state.gridMode = map.get(`${id}`).class;
+      nextTick(() => {
+        initPos(domlist);
+      });
     };
     onMounted(() => {
       changeGrid({ id: 0 });
     });
-    nextTick(() => {
-      initPos(domlist);
-    });
+    // nextTick(() => {
+    //   initPos(domlist);
+    // });
     return {
       ...toRefs(state),
       changeGrid,
@@ -210,7 +229,7 @@ export default {
 };
 </script>
 
-<style lang='scss'>
+<style lang="scss">
 @import "@/common/mixin.scss";
 .grid-container {
   display: flex;
