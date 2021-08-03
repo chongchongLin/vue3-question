@@ -58,8 +58,8 @@ export default {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(3, 33%);
-  grid-template-rows: repeat(3, 33%);
+  grid-template-columns: repeat(5, 20%);
+  grid-template-rows: repeat(5, 20%);
   grid-gap: 20px 20px;
 
   .item {

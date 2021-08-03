@@ -1,0 +1,15 @@
+@media (min-width:320px) and (max-width:359px){
+    body{
+        font-size: 12px;
+    }
+}
+@media (min-width:360px) and (max-width:374px){
+    body{
+        font-size: 14px;
+    }
+}
+@media (min-width:375px) and (max-width:385px){
+    body{
+        font-size: 14px;
+    }
+}

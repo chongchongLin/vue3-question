@@ -87,7 +87,7 @@ export default {
           minYRange: `${y}`,
         });
       });
-      console.log(state.posList)
+      console.log(state.posList);
     };
     const initList = (num) => {
       let array = [];
@@ -326,6 +326,15 @@ export default {
   .grid-box-item:nth-child(4) {
     grid-column: 3 / 5;
     grid-row: 3 / 5;
+  }
+}
+@media (min-width: 375px) and (max-width: 385px) {
+  .grid-box {
+    @include wh(240px, 240px);
+  }
+  .color-list {
+    @include wh(100px, 300px);
+    margin-right: 12px;
   }
 }
 </style>

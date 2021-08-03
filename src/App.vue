@@ -91,8 +91,10 @@ export default {
 </script>
 
 <style lang="scss">
+@import "./common/media.css";
 html,
 body {
+  min-width: 320px;
   min-height: 100%;
   overflow-x: hidden;
   background: #f4f5f5;
@@ -111,4 +113,6 @@ body {
   margin: 74px auto;
   -webkit-overflow-scrolling: touch;
 }
+
+
 </style>
