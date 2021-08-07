@@ -39,12 +39,48 @@
         </div>
       </div>
     </div>
+    <el-drawer
+      :title="selectInfo.name"
+      v-model="dialog"
+      :direction="direction"
+      :before-close="handleClose"
+      destroy-on-close
+      ref="drawer"
+    >
+      <div class="demo-drawer__content">
+        <el-form :model="selectInfo">
+          <el-form-item
+            label="宽度:"
+            :label-width="formLabelWidth"
+            class="info-size"
+          >
+            <el-input v-model="selectInfo.width" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item
+            label="高度:"
+            :label-width="formLabelWidth"
+            class="info-size"
+          >
+            <el-input v-model="selectInfo.height" autocomplete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div class="demo-drawer__footer">
+          <el-button @click="cancelForm">取 消</el-button>
+          <el-button
+            type="primary"
+            @click="$refs.drawer.closeDrawer()"
+            :loading="loading"
+            >{{ loading ? "提交中 ..." : "确 定" }}</el-button
+          >
+        </div>
+      </div>
+    </el-drawer>
   </div>
 </template>
 
 <script>
 import { reactive, toRefs, onMounted, toRaw, ref, watch, nextTick } from "vue";
-
+import { ElMessageBox } from 'element-plus';
 const colorList = [
   "#f30c0c",
   "#f36c0c",
@@ -68,6 +104,11 @@ export default {
   setup() {
     const domlist = ref([]);
     const state = reactive({
+      timer: null,
+      loading: false,
+      dialog: false,
+      formLabelWidth: "80px",
+      selectInfo: {},
       colorLists: colorList,
       radioList: btnList,
       radio3: "2x2",
@@ -75,12 +116,16 @@ export default {
       gridMode: "",
       selectId: "",
       posList: [],
+      drawer: false,
+      direction: "rtl",
     });
     const initPos = (doms) => {
       const domList = toRaw(doms.value);
       domList.forEach((item) => {
         const { x, y, width, height } = item.getBoundingClientRect();
         state.posList.push({
+          width,
+          height,
           maxXRange: `${x + width}`,
           minXRange: `${x}`,
           maxYRange: `${y + height}`,
@@ -116,14 +161,25 @@ export default {
       return res;
     };
     const selectBox = (item) => {
+      state.drawer = true;
       state.gridList.forEach((child, index) => {
         if (item.id == child.id) {
           child.selected = true;
           state.selectId = item.id;
+          selectItemInfo(index);
         } else {
           child.selected = false;
         }
       });
+    };
+    const selectItemInfo = (index) => {
+      state.dialog = true;
+      const res = state.posList[index];
+      state.selectInfo = {
+        width: res.width,
+        height: res.height,
+        name: `格子${index}号`,
+      };
     };
     const selectColor = (color) => {
       const id = state.selectId;
@@ -208,6 +264,14 @@ export default {
         initPos(domlist);
       });
     };
+    const cancelForm = () => {
+      state.dialog = false;
+      state.loading = false;
+      clearTimeout(state.timer);
+    };
+    const handleClose = (done) => {
+        done()
+    };
     onMounted(() => {
       changeGrid({ id: 0 });
     });
@@ -217,6 +281,7 @@ export default {
     return {
       ...toRefs(state),
       changeGrid,
+      cancelForm,
       selectColor,
       selectBox,
       handleDragStart,
@@ -224,6 +289,7 @@ export default {
       handleDragEnter,
       handleDragEnd,
       domlist,
+      handleClose,
     };
   },
 };
@@ -246,6 +312,14 @@ export default {
   .color-item {
     height: 48px;
   }
+}
+.info-size {
+  width: 200px;
+}
+.demo-drawer__footer {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
 }
 .grid-box {
   @include wh(500px, 500px);
