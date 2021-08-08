@@ -119,7 +119,7 @@ export default {
       selectInfo: {},
       colorLists: colorList,
       radioList: btnList,
-      radio3: "2x2",
+      radio3: "12x12",
       gridList: [],
       gridMode: "",
       selectId: "",
@@ -318,11 +318,9 @@ export default {
       done();
     };
     onMounted(() => {
-      changeGrid({ id: 0 });
+      changeGrid({ id: 9});
     });
-    // nextTick(() => {
-    //   initPos(domlist);
-    // });
+
     return {
       ...toRefs(state),
       gridBox,

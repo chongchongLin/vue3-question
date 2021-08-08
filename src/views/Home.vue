@@ -40,6 +40,11 @@ export default {
           name: "宫格切换",
           id: 3,
         },
+           {
+          path: "/tweleve-grid",
+          name: "12宫格切换",
+          id: 4,
+        },
       ],
     });
     const showComponent = (pathCtn) => {
@@ -58,7 +63,8 @@ export default {
   width: 100%;
   height: 100%;
   display: grid;
-  grid-template-columns: repeat(5, 20%);
+  justify-content: center;
+  grid-template-columns: repeat(5, 18%);
   grid-template-rows: repeat(5, 20%);
   grid-gap: 20px 20px;
 
