@@ -54,6 +54,15 @@ const router = createRouter({
         index: 1,
       },
     },
+    {
+      path: "/tweleve-grid",
+      name: "tweleve-grid",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/components/TweleveGrid.vue"),
+      meta: {
+        index: 1,
+      },
+    },
   ],
 });
 router.beforeEach((to, from, next) => {

@@ -119,17 +119,15 @@ export default {
       selectInfo: {},
       colorLists: colorList,
       radioList: btnList,
-      radio3: "2x2",
+      radio3: "12x12",
       gridList: [],
       gridMode: "",
       selectId: "",
       drawer: false,
       direction: "rtl",
     });
-    //初始化格子dom
     const initPos = (doms) => {
       const domList = toRaw(doms.value);
-       domList = domList.filter((item)=>item)
       domList.forEach((item, index) => {
         const { x, y, width, height } = item.getBoundingClientRect();
         state.gridList[index] = {
@@ -165,7 +163,6 @@ export default {
       state.selectId = findIndex(x, y, gridList);
       selectColor(item);
     };
-    //判断鼠标落点位置并返回相应格子索引值
     const findIndex = (x, y, arr) => {
       let res;
       arr.forEach((item, index) => {
@@ -321,8 +318,9 @@ export default {
       done();
     };
     onMounted(() => {
-      changeGrid({ id: 0 });
+      changeGrid({ id: 9});
     });
+
     return {
       ...toRefs(state),
       gridBox,
