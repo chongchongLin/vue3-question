@@ -76,18 +76,21 @@ export default {
       selectId: "",
       posList: [],
     });
+    //初始化格子dom
     const initPos = (doms) => {
-      const domList = toRaw(doms.value);
+      state.posList = [];
+      let domList = toRaw(doms.value);
+      domList = domList.filter((item)=>item)
       domList.forEach((item) => {
-        const { x, y, width, height } = item.getBoundingClientRect();
-        state.posList.push({
-          maxXRange: `${x + width}`,
-          minXRange: `${x}`,
-          maxYRange: `${y + height}`,
-          minYRange: `${y}`,
-        });
+          const { x, y, width, height } = item.getBoundingClientRect();
+          //格子范围
+          state.posList.push({
+            maxXRange: `${x + width}`,
+            minXRange: `${x}`,
+            maxYRange: `${y + height}`,
+            minYRange: `${y}`,
+          });
       });
-      console.log(state.posList);
     };
     const initList = (num) => {
       let array = [];
@@ -105,6 +108,7 @@ export default {
       state.selectId = findIndex(x, y, posList);
       selectColor(item);
     };
+    //判断鼠标落点位置并返回相应格子索引值
     const findIndex = (x, y, arr) => {
       let res;
       arr.forEach((item, index) => {
@@ -135,7 +139,6 @@ export default {
     };
     //宫格转换
     const changeGrid = (item) => {
-      state.posList = [];
       const { id } = item;
       let map = new Map([
         [
@@ -211,9 +214,6 @@ export default {
     onMounted(() => {
       changeGrid({ id: 0 });
     });
-    // nextTick(() => {
-    //   initPos(domlist);
-    // });
     return {
       ...toRefs(state),
       changeGrid,
