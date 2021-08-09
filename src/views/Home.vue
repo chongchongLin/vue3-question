@@ -41,8 +41,8 @@ export default {
           id: 3,
         },
            {
-          path: "/tweleve-grid",
-          name: "12宫格切换",
+          path: "/flex",
+          name: "flex宫格",
           id: 4,
         },
       ],

@@ -34,14 +34,12 @@
           :style="{
             background: item.color,
             width: item.width + 'px',
-            height: item.height,
-            marginLeft: item.left + 'px',
-            marginRight: item.right + 'px',
+            height: item.height + 'px',
           }"
           :class="[{ selected: item.selected }]"
           @click="selectBox(item)"
         >
-          {{ item.id }}
+          {{ index }}
         </div>
       </div>
     </div>
@@ -72,6 +70,7 @@
         </el-form>
         <div class="demo-drawer__footer">
           <el-button @click="cancelForm">取 消</el-button>
+          <el-button @click="deleteBox">删除</el-button>
           <el-button
             type="primary"
             @click="submit(selectId)"
@@ -119,7 +118,7 @@ export default {
       selectInfo: {},
       colorLists: colorList,
       radioList: btnList,
-      radio3: "12x12",
+      radio3: "2x2",
       gridList: [],
       gridMode: "",
       selectId: "",
@@ -142,6 +141,8 @@ export default {
           minYRange: `${y}`,
         };
       });
+
+      console.log("state.gridList", state.gridList);
     };
     const initList = (num) => {
       let array = [];
@@ -178,7 +179,7 @@ export default {
       state.gridList.forEach((child, index) => {
         if (item.id == child.id) {
           child.selected = true;
-          state.selectId = item.id;
+          state.selectId = index;
           selectItemInfo(index);
         } else {
           child.selected = false;
@@ -195,30 +196,98 @@ export default {
         name: `格子${index}号`,
         x: res.x,
         y: res.y,
+        minYRange: res.minYRange,
+        maxYRange: res.maxYRange,
+        minXRange: res.minXRange,
+        maxXRange: res.maxXRange,
       };
     };
+    //确认
     const submit = (index) => {
-      const { width, height, y } = state.selectInfo;
+      const {
+        width,
+        height,
+        y,
+        minYRange,
+        maxYRange,
+        minXRange,
+        maxXRange,
+      } = state.selectInfo;
       state.gridList[index].width = width * 1;
       state.gridList[index].height = height * 1;
       state.dialog = false;
+      //计算相同y轴坐标有多少个
+      const yCount = calculRowBoxNum(
+        state.gridList,
+        "y",
+        state.gridList[index].y
+      );
+      const xCount = calculRowBoxNum(
+        state.gridList,
+        "x",
+        state.gridList[index].x
+      );
       const container = gridBox.value.getBoundingClientRect();
-      let otherWidth = Math.round((container.width - width) / 1);
-      let addWidth = container.width / 2 - otherWidth;
-      console.log('addwidht',addWidth)
-      state.gridList[index].left = -addWidth;
+      const ctxMaxY = container.height*1+container.y*1;
+      console.log('container',container)
+      let otherWidth =
+        yCount > 1
+          ? Math.round((container.width - width) / (yCount - 1))
+          : width;
+
+      let otherHeight =
+        xCount > 1
+          ? Math.round((container.height - height) / (xCount - 1))
+          : width;
+      //更改其他格子的宽度
       state.gridList.forEach((item) => {
-        if (item.y == y && item.id != index) {
+        if (
+          item.minYRange >= minYRange &&
+          maxYRange >= item.maxYRange &&
+          item.id != index
+        ) {
           item.width = otherWidth;
         }
-        if(addWidth == 0){
-          item.left = 0;
+        if (
+          item.minXRange >= minXRange &&
+          maxXRange >= item.maxXRange &&
+          item.id != index
+        ) {
+          item.height = otherHeight;
         }
       });
-
-      console.log("gridList", state.gridList);
+      //更新选中位置信息
+      nextTick(() => {
+        initPos(domlist);
+         let overIndex = overContainerBox(state.gridList,ctxMaxY);
+         console.log('ondex',overIndex)
+      });
+     
     };
- 
+    //判断哪个格子超出container
+    const overContainerBox = (list,maxY)=>{
+      console.log('list',list)
+        let res;
+        list.forEach((item,index)=>{
+          if(item.maxYRange>maxY){
+              console.log('item',item)
+              res = index;
+          }
+        })
+      
+        return res
+    };
+    //根据y坐标,计算当前数组一行有几个格子
+    const calculRowBoxNum = (list, pos, val) => {
+      let count = 0;
+      list.forEach((item) => {
+        if (item[pos] == val) {
+          count += 1;
+        }
+      });
+      return count;
+    };
+    //选择颜色
     const selectColor = (color) => {
       const id = state.selectId;
       state.gridList.forEach((item) => {
@@ -295,7 +364,7 @@ export default {
             length: 13,
           },
         ],
-            [
+        [
           "9",
           {
             class: "twelve-twelve",
@@ -317,8 +386,13 @@ export default {
     const handleClose = (done) => {
       done();
     };
+    //删除格子
+    const deleteBox = () => {
+      state.gridList.splice(state.selectId, 1);
+      state.dialog = false;
+    };
     onMounted(() => {
-      changeGrid({ id: 9});
+      changeGrid({ id: 0 });
     });
 
     return {
@@ -335,6 +409,7 @@ export default {
       domlist,
       handleClose,
       submit,
+      deleteBox,
     };
   },
 };
@@ -368,61 +443,87 @@ export default {
 }
 .grid-box {
   @include wh(500px, 500px);
-  display: grid;
+  display: flex;
   .grid-box-item {
     display: flex;
     align-items: center;
     justify-content: center;
     border: 1px solid black;
+    box-sizing: border-box;
     cursor: pointer;
   }
   .selected {
-    border: 3px solid red !important;
+    border: 1px solid red !important;
   }
 }
 .grid-two-two {
-  grid-template-columns: repeat(2, 50%);
-  grid-template-rows: repeat(2, 50%);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .grid-box-item {
+    @include wh(50%, 50%);
+  }
 }
 .gird-three-three {
-  grid-template-columns: repeat(3, 33.3%);
-  grid-template-rows: repeat(3, 33.3%);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .grid-box-item {
+    @include wh(33.3%, 33.3%);
+  }
 }
 .gird-four-four {
-  grid-template-columns: repeat(4, 25%);
-  grid-template-rows: repeat(4, 25%);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .grid-box-item {
+    @include wh(25%, 25%);
+  }
 }
 
 .gird-five-five {
-  grid-template-columns: repeat(5, 20%);
-  grid-template-rows: repeat(5, 20%);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .grid-box-item {
+    @include wh(20%, 20%);
+  }
 }
 .gird-two {
-  grid-template-columns: repeat(2, 50%);
-  grid-template-rows: repeat(1, 100%);
+  .grid-box-item {
+    @include wh(50%, 100%);
+  }
 }
 .header-foot-foot {
-  grid-template-columns: repeat(2, 50%);
-  grid-template-rows: repeat(2, 50%);
+  flex-wrap: wrap;
+  justify-content: space-between;
   .grid-box-item:nth-child(1) {
-    grid-column: 1 / 4;
+    width: 100%;
+    height: 50%;
+  }
+  .grid-box-item {
+    @include wh(50%, 50%);
   }
 }
 .left-one-box {
-  grid-template-columns: repeat(3, 33.3%);
-  grid-template-rows: repeat(3, 33.3%);
+  // display: table;
+  display: block;
+  text-align: center;
+  .grid-box-item {
+    @include wh(33.3%, 33.3%);
+    display: inline-block;
+  }
   .grid-box-item:nth-child(1) {
-    grid-column: 1/3;
-    grid-row: 1/3;
+    @include wh(66.6%, 66.6%);
+    float: left;
   }
 }
 
 .header-more {
-  grid-template-columns: repeat(4, 25%);
-  grid-template-rows: repeat(4, 25%);
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .grid-box-item {
+    @include wh(25%, 25%);
+  }
   .grid-box-item:nth-child(1) {
-    grid-column: 1 / 5;
-    grid-row: 1 / 3;
+    width: 100%;
+    height: 50%;
   }
 }
 
@@ -447,9 +548,12 @@ export default {
     grid-row: 3 / 5;
   }
 }
-.twelve-twelve{
-  grid-template-columns: repeat(12, 1fr);
-  grid-template-rows: repeat(12, 1fr);
+.twelve-twelve {
+  flex-wrap: wrap;
+  justify-content: space-between;
+  .grid-box-item {
+    @include wh(7%, 7%);
+  }
 }
 @media (min-width: 375px) and (max-width: 385px) {
   .grid-box {

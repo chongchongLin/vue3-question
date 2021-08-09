@@ -128,7 +128,7 @@ export default {
     });
     //初始化格子dom
     const initPos = (doms) => {
-      const domList = toRaw(doms.value);
+      let domList = toRaw(doms.value);
        domList = domList.filter((item)=>item)
       domList.forEach((item, index) => {
         const { x, y, width, height } = item.getBoundingClientRect();

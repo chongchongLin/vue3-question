@@ -55,10 +55,10 @@ const router = createRouter({
       },
     },
     {
-      path: "/tweleve-grid",
-      name: "tweleve-grid",
+      path: "/flex",
+      name: "flex",
       component: () =>
-        import(/* webpackChunkName: "home" */ "@/components/TweleveGrid.vue"),
+        import(/* webpackChunkName: "home" */ "@/components/Flex.vue"),
       meta: {
         index: 1,
       },
