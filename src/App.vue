@@ -1,8 +1,8 @@
 <template>
   <div id="app">
-    <nav-header></nav-header>
+    <nav-header v-if="route.meta.isHeader"></nav-header>
     <router-view class="router-view"> </router-view>
-    <web-footer></web-footer>
+    <web-footer v-if="route.meta.isHeader"></web-footer>
   </div>
 </template>
 
@@ -17,6 +17,7 @@ import {
   ref,
   toRaw,
 } from "vue";
+import { useRoute} from "vue-router";
 import navHeader from "@/components/Header.vue";
 import webFooter from "@/components/Footer.vue";
 export default {
@@ -25,6 +26,7 @@ export default {
     webFooter,
   },
   setup() {
+    const route = useRoute();
     const state = reactive({
       date: [],
       count: 1,
@@ -84,6 +86,7 @@ export default {
       });
     };
     return {
+      route,
       ...toRefs(state),
     };
   },
@@ -98,6 +101,7 @@ body {
   min-height: 100%;
   overflow-x: hidden;
   background: #f4f5f5;
+  margin: 0;
   // overflow-y: scroll;
 }
 #app {

@@ -15,6 +15,8 @@ const router = createRouter({
       meta: {
         title: '首页',
         index: 1,
+        isHeader:true,
+
       },
     },
     {
@@ -25,6 +27,8 @@ const router = createRouter({
       meta: {
         title: '工资计算器',
         index: 1,
+        isHeader:true,
+
       },
     },
     {
@@ -34,6 +38,8 @@ const router = createRouter({
         import(/* webpackChunkName: "monitor" */ "@/components/Monitor.vue"),
       meta: {
         index: 1,
+        isHeader:true,
+
       },
     },
     {
@@ -43,6 +49,8 @@ const router = createRouter({
         import(/* webpackChunkName: "verify-code" */ "@/components/VerifyCode.vue"),
       meta: {
         index: 1,
+        isHeader:true,
+
       },
     },
     {
@@ -52,6 +60,8 @@ const router = createRouter({
         import(/* webpackChunkName: "home" */ "@/components/Grid.vue"),
       meta: {
         index: 1,
+        isHeader:true,
+
       },
     },
     {
@@ -61,8 +71,19 @@ const router = createRouter({
         import(/* webpackChunkName: "home" */ "@/components/Flex.vue"),
       meta: {
         index: 1,
+        isHeader:true,
       },
     },
+    {
+      path: '/scaleLayout',
+      name: "scaleLayout",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/components/ScaleLayout.vue"),
+      meta: {
+        isHeader:false,
+        index: 1,
+      },
+    }
   ],
 });
 router.beforeEach((to, from, next) => {

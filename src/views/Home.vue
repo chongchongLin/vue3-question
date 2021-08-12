@@ -40,10 +40,15 @@ export default {
           name: "宫格切换",
           id: 3,
         },
-           {
+        {
           path: "/flex",
           name: "flex宫格",
           id: 4,
+        },
+         {
+          path: "/scaleLayout",
+          name: "比例宫格",
+          id: 5,
         },
       ],
     });

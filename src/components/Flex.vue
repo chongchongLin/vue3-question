@@ -35,6 +35,7 @@
             background: item.color,
             width: item.width + 'px',
             height: item.height + 'px',
+            marginTop: item.top + 'px',
           }"
           :class="[{ selected: item.selected }]"
           @click="selectBox(item)"
@@ -141,8 +142,6 @@ export default {
           minYRange: `${y}`,
         };
       });
-
-      console.log("state.gridList", state.gridList);
     };
     const initList = (num) => {
       let array = [];
@@ -228,8 +227,8 @@ export default {
         state.gridList[index].x
       );
       const container = gridBox.value.getBoundingClientRect();
-      const ctxMaxY = container.height*1+container.y*1;
-      console.log('container',container)
+      const ctxMaxY = container.height * 1 + container.y * 1;
+
       let otherWidth =
         yCount > 1
           ? Math.round((container.width - width) / (yCount - 1))
@@ -239,7 +238,7 @@ export default {
         xCount > 1
           ? Math.round((container.height - height) / (xCount - 1))
           : width;
-      //更改其他格子的宽度
+      //更改其他格子的宽度和高度
       state.gridList.forEach((item) => {
         if (
           item.minYRange >= minYRange &&
@@ -259,23 +258,58 @@ export default {
       //更新选中位置信息
       nextTick(() => {
         initPos(domlist);
-         let overIndex = overContainerBox(state.gridList,ctxMaxY);
-         console.log('ondex',overIndex)
+        setOverBoxMargin(ctxMaxY, container.height);
       });
-     
+    };
+    //设置超出格子的margin
+    const setOverBoxMargin = (maxY, ctnHeight) => {
+      let posObj = overContainerBox(state.gridList, maxY);
+      if (posObj) {
+        const { index } = posObj;
+        const overDom = state.gridList[index];
+        let top =  overDom.top ? overDom.top : 0;
+        const distance = calculColHeight(overDom.x, ctnHeight,top);
+        state.gridList[index].top = -distance;
+      }else{
+        resetBox('top')
+      }
+      //更新dom
+      nextTick(()=>{
+        initPos(domlist)
+      })
+    };
+    //重置格子属性
+    const resetBox = (name)=>{
+      state.gridList.forEach((item)=>{
+        item[name] = 0
+      })
+    };
+    //计算超出的高度
+    const calculColHeight = (val, ctnHeight,top) => {
+      let columnBox = [];
+      state.gridList.forEach((item) => {
+        if (item.x == val) {
+          columnBox.push(item);
+        }
+      });
+      //第一个格子的左上点
+      const firstBoxY = columnBox[0].y;
+      //最后一个格子的左下点
+      const lastBoxY = columnBox[columnBox.length - 1].maxYRange;
+      let distance = (lastBoxY - firstBoxY - ctnHeight)-top;
+      return distance;
     };
     //判断哪个格子超出container
-    const overContainerBox = (list,maxY)=>{
-      console.log('list',list)
-        let res;
-        list.forEach((item,index)=>{
-          if(item.maxYRange>maxY){
-              console.log('item',item)
-              res = index;
-          }
-        })
-      
-        return res
+    const overContainerBox = (list, maxY) => {
+      let posObj;
+      list.forEach((item, index) => {
+        if (item.maxYRange > maxY) {
+          posObj = {
+            index,
+          };
+        }
+      });
+      return posObj;
     };
     //根据y坐标,计算当前数组一行有几个格子
     const calculRowBoxNum = (list, pos, val) => {
