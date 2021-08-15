@@ -1,22 +1,19 @@
+/* 
+  思考
+    1.是否可以把initMointorList替换成gridList？
+    // 不能,如果是同一个变量就不需要确认按钮了
+    2.设置完D区域后,再点击D区域是否应该已展示已有信息？
+    //是
+    3.新增单个监控如何进行？
+    4.是否需要确认按钮？
+    
+  未完成
+    1.接数据进行测试
+ */
 <template>
   <div class="grid-container">
     <header class="nav-bar">
-      <!-- <el-radio-group v-model="radio3">
-        <el-radio-button
-          @click="changeGrid(item)"
-          :label="item.name"
-          v-for="item in radioList"
-          :key="item"
-        ></el-radio-button>
-      </el-radio-group> -->
-      <span>监控数量</span>
-      <el-input
-        v-model="num"
-        placeholder="请输入初始化监控数量"
-        @change="handleChange"
-        class="box-num"
-      ></el-input>
-      <el-button @click="add" type="primary">新增监控</el-button>
+      可配置模块A
     </header>
     <div class="container">
       <div class="left-container">可配置模块B</div>
@@ -36,7 +33,7 @@
               fontSize: item.boxFontSize + 'px',
             }"
             :class="[{ selected: item.selected }]"
-            @click="selectBox(item,$event)"
+            @click="selectBox(item, $event)"
           >
             <div class="box-top">
               <div class="box-status"></div>
@@ -64,77 +61,85 @@
       :before-close="handleClose"
       destroy-on-close
       ref="drawer"
+      custom-class="d-area-drawer"
     >
       <div class="demo-drawer__content">
         <el-form :model="selectInfo">
           <el-form-item
-            label="宽度:"
+            label="监控数量:"
             :label-width="formLabelWidth"
             class="info-size"
           >
             <el-input
-              :disabled="true"
-              @input="widthChange()"
-              v-model="selectInfo.width"
+              v-model="monitorNum"
               autocomplete="off"
+              @input="numChange()"
             ></el-input>
           </el-form-item>
-          <el-form-item
-            label="高度:"
-            :label-width="formLabelWidth"
-            class="info-size"
+          <div
+            class="moitor-info"
+            v-for="(item, index) in initMoitorList"
+            :key="index"
           >
-            <el-input
-              :disabled="true"
-              @input="heightChange()"
-              v-model="selectInfo.height"
-              autocomplete="off"
-            ></el-input>
-          </el-form-item>
-          <el-form-item
-            label="X:"
-            :label-width="formLabelWidth"
-            class="info-size"
-          >
-            <el-input-number
-              :min="0"
-              @input="xChange()"
-              v-model="selectInfo.left"
-              autocomplete="off"
-            ></el-input-number>
-          </el-form-item>
-          <el-form-item
-            label="Y:"
-            :label-width="formLabelWidth"
-            class="info-size"
-          >
-            <el-input-number
-              :min="0"
-              @input="yChange()"
-              v-model="selectInfo.top"
-              autocomplete="off"
-            ></el-input-number>
-          </el-form-item>
-          <el-form-item
-            label="倍数:"
-            :label-width="formLabelWidth"
-            class="info-size"
-          >
-            <el-input
-              v-model="selectInfo.scale"
-              autocomplete="off"
-              @input="scaleChange()"
-            ></el-input>
-          </el-form-item>
-          <el-form-item
-            label="比例:"
-            :label-width="formLabelWidth"
-            class="info-size"
-          >
-            1920/1080 (16/9)
-          </el-form-item>
+            <el-form-item
+              label="宽度:"
+              :label-width="formLabelWidth"
+              class="info-size"
+            >
+              <el-input
+                @input="itemWidthChange(item)"
+                v-model="item.width"
+                autocomplete="off"
+              ></el-input>
+            </el-form-item>
+            <el-form-item
+              label="高度:"
+              :label-width="formLabelWidth"
+              class="info-size"
+            >
+              <el-input
+                @input="itemHeightChange(item)"
+                v-model="item.height"
+                autocomplete="off"
+              ></el-input>
+            </el-form-item>
+            <el-form-item
+              label="X:"
+              :label-width="formLabelWidth"
+              class="info-size"
+            >
+              <el-input-number
+                :min="0"
+                v-model="item.left"
+                autocomplete="off"
+              ></el-input-number>
+            </el-form-item>
+            <el-form-item
+              label="Y:"
+              :label-width="formLabelWidth"
+              class="info-size"
+            >
+              <el-input-number
+                :min="0"
+                v-model="item.top"
+                autocomplete="off"
+              ></el-input-number>
+            </el-form-item>
+            <el-form-item
+              label="比例:"
+              :label-width="formLabelWidth"
+              class="info-size"
+            >
+              1920/1080 (16/9)
+            </el-form-item>
+          </div>
         </el-form>
-        <div class="demo-drawer__footer"></div>
+        <div class="d-area-footer">
+          <el-button type="primary" @click="submit()" :loading="loading">{{
+            loading ? "提交中 ..." : "确 定"
+          }}</el-button>
+          <el-button @click="cancelForm">取 消</el-button>
+        </div>
       </div>
     </el-drawer>
     <el-drawer
@@ -245,14 +250,34 @@ export default {
     const domlist = ref([]);
     const num = ref(1);
     const state = reactive({
-      dAreaLog:false,
+      monitorNum:1,
+      initMoitorList: [
+        {
+          id: 999,
+          selected: false,
+          color: "",
+          boxFontSize:14,
+          left:0,
+          width:0,
+          height:0,
+          top:0,
+          scale:1,}
+      ],
+      dAreaLog: false,
       dAreaObj: {},
-      boxFontSize: 14,
       timer: null,
       loading: false,
       dialog: false,
       formLabelWidth: "80px",
-      selectInfo: {},
+      selectInfo: {
+        width: 0,
+        height: 0,
+        number: 1,
+        top: 0,
+        left: 0,
+        boxFontSize: 14,
+        scale: 1,
+      },
       radioList: btnList,
       radio3: "3x2",
       gridList: [],
@@ -261,7 +286,7 @@ export default {
       drawer: false,
       lastSelect: {},
       direction: "rtl",
-      dAreaDirection:"ltr",
+      dAreaDirection: "ltr",
     });
     const initPos = (doms) => {
       let domList = toRaw(doms.value);
@@ -277,23 +302,27 @@ export default {
         };
       });
     };
-    const initList = (num) => {
+    const initList = (number) => {
       let array = [];
-      for (let i = 0; i < num; i++) {
+      for (let i = 0; i < number; i++) {
         array.push({
           id: i,
           selected: false,
           color: "",
-          boxFontSize: 14,
-          left: 0,
-          top: 0,
-          scale: 1,
+          boxFontSize:14,
+          left:0,
+          width:0,
+          height:0,
+          top:0,
+          scale:1,
         });
       }
       return array;
     };
 
-    const selectBox = (item) => {
+    const selectBox = (item, event) => {
+      //阻止冒泡
+      event.stopPropagation();
       state.drawer = true;
       state.gridList.forEach((child, index) => {
         if (item.id == child.id) {
@@ -330,8 +359,18 @@ export default {
     const yChange = () => {
       state.gridList[state.selectId].top = state.selectInfo.top;
     };
+    const itemWidthChange = (item) => {
+      let scale = 9 / 16;
+      item.height = item.width * scale;
+    };
+    const itemHeightChange = (item) => {
+      let scale = 16/9;
+      item.width = item.height * scale;
+    };
     const setDArea = () => {
-        state.dAreaLog = true;
+      state.dAreaLog = true;
+      (state.initMoitorList.length = state.monitorNum);
+      console.log("initMoitorList", state.initMoitorList);
     };
     //改变比例大小
     const scaleChange = () => {
@@ -358,37 +397,25 @@ export default {
       let width = height * scale;
       state.selectInfo.width = width;
     };
+    const numChange = () => {
+      state.initMoitorList.length = state.monitorNum;
+      state.initMoitorList = initList(state.monitorNum);
+    };
+
     //确认
-    const submit = (index) => {
-      const { width, height, boxFontSize, left, top } = state.selectInfo;
-      console.log("x", left);
-      console.log("y", top);
-      //缩放字体
-      const lastArea = state.lastSelect.width * state.lastSelect.height;
-      let area = width * height;
-      const scale = area / lastArea;
-      //避免字体过大
-      state.gridList[index].boxFontSize =
-        scale > 1 ? boxFontSize * scale * 0.8 : boxFontSize * scale;
-      //更改宽高,x,y
-      state.gridList[index].width = width * 1;
-      state.gridList[index].height = height * 1;
-      state.gridList[index].left = left * 1;
-      state.gridList[index].top = top * 1;
-
-      console.log("select", state.gridList[index]);
-      state.dialog = false;
-
+    const submit = () => {
+      state.gridList = state.initMoitorList;
       //更新选中位置信息
       nextTick(() => {
         initPos(domlist);
       });
+      state.dAreaLog = false;
     };
 
     //宫格转换
-    const changeGrid = (length) => {
+    const changeGrid = (initObj) => {
       state.gridList = [];
-      state.gridList = initList(length);
+      state.gridList = initList(initObj);
       const { offsetWidth, offsetHeight } = dArea.value;
       state.dAreaObj.width = offsetWidth;
       state.dAreaObj.height = offsetHeight;
@@ -410,9 +437,7 @@ export default {
       num.value = state.gridList.length;
       state.dialog = false;
     };
-    const handleChange = (value) => {
-      changeGrid(value);
-    };
+
     const add = () => {
       state.gridList.push({
         id: state.gridList.length,
@@ -427,8 +452,7 @@ export default {
     };
 
     onMounted(() => {
-      changeGrid(num.value);
-      console.log("state", state.gridList);
+      // changeGrid(num.value);
     });
 
     return {
@@ -443,14 +467,16 @@ export default {
       deleteBox,
       widthChange,
       heightChange,
+      itemWidthChange,
+      itemHeightChange,
       num,
-      handleChange,
       add,
       dArea,
       xChange,
       yChange,
       scaleChange,
       setDArea,
+      numChange,
     };
   },
 };
@@ -502,11 +528,22 @@ export default {
     @include fa();
     flex-direction: column;
     border: 1px solid black;
+    cursor: pointer;
   }
 }
 
 .info-size {
   width: 200px;
+}
+
+.d-area-footer {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+}
+.demo-drawer__content{
+  transform:translate(0);
+  min-height:100%
 }
 .demo-drawer__footer {
   position: fixed;

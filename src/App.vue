@@ -117,6 +117,9 @@ body {
   margin: 74px auto;
   -webkit-overflow-scrolling: touch;
 }
+.el-drawer, .d-area-drawer{
+  overflow: scroll !important;
+}
 
 
 </style>
