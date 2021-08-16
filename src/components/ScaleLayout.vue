@@ -12,12 +12,34 @@
  */
 <template>
   <div class="grid-container">
-    <header class="nav-bar">
-      可配置模块A
-    </header>
+    <header class="nav-bar">可配置模块A</header>
     <div class="container">
-      <div class="left-container">可配置模块B</div>
-      <div class="d-area" ref="dArea" @click="setDArea">
+      <div
+        class="left-container"
+        ref="bArea"
+        @click="setBArea"
+        :class="bAreaBtn == '靠右' ? 'right-pos' : ''"
+      >
+        <div class="left-top-container">可配置模块B</div>
+        <div class="left-bottom-container">
+          <div class="monitor-list">
+            <div
+              class="monitor-item"
+              v-for="(item, index) in monitorList"
+              :key="index"
+              @click="fillMointor(item, $event)"
+            >
+              {{ item.name }}
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="d-area"
+        ref="dArea"
+        @click="setDArea"
+        :class="bAreaBtn == '靠右' ? 'd-area-left' : ''"
+      >
         <div class="grid-box" :class="[gridMode]" ref="gridBox">
           <div
             :ref="(el) => (domlist[index] = el)"
@@ -32,28 +54,58 @@
               top: item.top + 'px',
               fontSize: item.boxFontSize + 'px',
             }"
-            :class="[{ selected: item.selected }]"
+            :class="item.id==selectId?'selected':''"
             @click="selectBox(item, $event)"
           >
+
             <div class="box-top">
               <div class="box-status"></div>
-              <div class="box-title">泉山区监控</div>
+              <div class="box-title">{{ item.name }}</div>
+              <div class="box-btn" @click="editorBox(item, $event)">编辑</div>
             </div>
             <div class="box-contaner">
-              <div class="monitor-box"></div>
+              <div class="monitor-box">
+                <video-player
+                  class="monitor-video"
+                  :playsinline="true"
+                  :options="item.videoOption"
+                  v-if="item.videoOption"
+                  style="height: 100%"
+                >
+                </video-player>
+              </div>
               <div class="monitor-info">
-                <div class="moitor-name">负责人</div>
-                <div class="moitor-name">周磊</div>
-                <div class="moitor-name">13626196182</div>
-                <div class="moitor-name safe-person">安全人</div>
-                <div class="moitor-name">周磊</div>
-                <div class="moitor-name safe-phone">13626196182</div>
+                <div class="moitor-name"></div>
+                <div class="moitor-name"></div>
+                <div class="moitor-name"></div>
+                <div class="moitor-name safe-person"></div>
+                <div class="moitor-name"></div>
+                <div class="moitor-name safe-phone"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+    <!-- B区域设置 -->
+    <el-drawer
+      title="B区域设置"
+      v-model="bAreaLog"
+      :direction="dAreaDirection"
+      :before-close="handleClose"
+      destroy-on-close
+      ref="drawer"
+    >
+      <div class="b-area">
+        <el-radio-group v-model="bAreaBtn">
+          <el-radio-button
+            :label="item.name"
+            v-for="(item, index) in bAreaBtnList"
+            :key="index"
+          ></el-radio-button>
+        </el-radio-group>
+      </div>
+    </el-drawer>
     <el-drawer
       title="D区域配置"
       v-model="dAreaLog"
@@ -63,32 +115,30 @@
       ref="drawer"
       custom-class="d-area-drawer"
     >
-      <div class="demo-drawer__content">
-        <el-form :model="selectInfo">
+      <div class="demo-drawer-content">
+        <el-form :model="monitorTmp">
+          <el-form-item
+            label="设置模板"
+            :label-width="formLabelWidth"
+            class="info-size"
+          >
+          </el-form-item>
           <el-form-item
             label="监控数量:"
             :label-width="formLabelWidth"
             class="info-size"
           >
-            <el-input
-              v-model="monitorNum"
-              autocomplete="off"
-              @input="numChange()"
-            ></el-input>
+            <el-input v-model="monitorTmp.number" autocomplete="off"></el-input>
           </el-form-item>
-          <div
-            class="moitor-info"
-            v-for="(item, index) in initMoitorList"
-            :key="index"
-          >
+          <div class="moitor-info">
             <el-form-item
               label="宽度:"
               :label-width="formLabelWidth"
               class="info-size"
             >
               <el-input
-                @input="itemWidthChange(item)"
-                v-model="item.width"
+                @input="widthChange(monitorTmp)"
+                v-model="monitorTmp.width"
                 autocomplete="off"
               ></el-input>
             </el-form-item>
@@ -98,8 +148,8 @@
               class="info-size"
             >
               <el-input
-                @input="itemHeightChange(item)"
-                v-model="item.height"
+                @input="heightChange(monitorTmp)"
+                v-model="monitorTmp.height"
                 autocomplete="off"
               ></el-input>
             </el-form-item>
@@ -110,7 +160,7 @@
             >
               <el-input-number
                 :min="0"
-                v-model="item.left"
+                v-model="monitorTmp.left"
                 autocomplete="off"
               ></el-input-number>
             </el-form-item>
@@ -121,7 +171,7 @@
             >
               <el-input-number
                 :min="0"
-                v-model="item.top"
+                v-model="monitorTmp.top"
                 autocomplete="off"
               ></el-input-number>
             </el-form-item>
@@ -135,6 +185,7 @@
           </div>
         </el-form>
         <div class="d-area-footer">
+          <el-button @click="add" type="primary">新增</el-button>
           <el-button type="primary" @click="submit()" :loading="loading">{{
             loading ? "提交中 ..." : "确 定"
           }}</el-button>
@@ -150,7 +201,7 @@
       destroy-on-close
       ref="drawer"
     >
-      <div class="demo-drawer__content">
+      <div class="demo-drawer-content">
         <el-form :model="selectInfo">
           <el-form-item
             label="宽度:"
@@ -159,7 +210,7 @@
           >
             <el-input
               :disabled="true"
-              @input="widthChange()"
+              @input="widthChange(selectInfo)"
               v-model="selectInfo.width"
               autocomplete="off"
             ></el-input>
@@ -171,7 +222,7 @@
           >
             <el-input
               :disabled="true"
-              @input="heightChange()"
+              @input="heightChange(selectInfo)"
               v-model="selectInfo.height"
               autocomplete="off"
             ></el-input>
@@ -220,7 +271,6 @@
           </el-form-item>
         </el-form>
         <div class="demo-drawer__footer">
-          <!-- <el-button @click="cancelForm">取 消</el-button> -->
           <el-button @click="deleteBox">删除</el-button>
           <!-- <el-button
             type="primary"
@@ -235,34 +285,47 @@
 </template>
 
 <script>
+import "videojs-contrib-hls";
 import { reactive, toRefs, onMounted, toRaw, ref, watch, nextTick } from "vue";
 import { ElMessageBox } from "element-plus";
 import Header from "./Header.vue";
 import Monitor from "./Monitor.vue";
-
+import axios from "axios";
 const btnList = [{ name: "3x2", id: 0 }];
 //比例 16/9
 export default {
   components: { Header, Monitor },
   setup() {
     const dArea = ref();
+    const bArea = ref();
     const gridBox = ref(null);
     const domlist = ref([]);
     const num = ref(1);
     const state = reactive({
-      monitorNum:1,
-      initMoitorList: [
+      monitorList: [],
+      bAreaBtn: "靠左",
+      bAreaBtnList: [
         {
-          id: 999,
-          selected: false,
-          color: "",
-          boxFontSize:14,
-          left:0,
-          width:0,
-          height:0,
-          top:0,
-          scale:1,}
+          name: "靠左",
+          pos: "left",
+        },
+        {
+          name: "靠右",
+          pos: "right",
+        },
       ],
+      monitorTmp: {
+        selected: false,
+        color: "",
+        boxFontSize: 14,
+        left: 0,
+        width: 0,
+        height: 0,
+        top: 0,
+        scale: 1,
+        number: 1,
+      },
+      bAreaLog: false,
       dAreaLog: false,
       dAreaObj: {},
       timer: null,
@@ -278,8 +341,6 @@ export default {
         boxFontSize: 14,
         scale: 1,
       },
-      radioList: btnList,
-      radio3: "3x2",
       gridList: [],
       gridMode: "",
       selectId: "",
@@ -302,43 +363,49 @@ export default {
         };
       });
     };
-    const initList = (number) => {
+    const initList = (monitorObj) => {
+      const { number, left, width, height, top, scale } = monitorObj;
       let array = [];
       for (let i = 0; i < number; i++) {
         array.push({
           id: i,
           selected: false,
           color: "",
-          boxFontSize:14,
-          left:0,
-          width:0,
-          height:0,
-          top:0,
-          scale:1,
+          boxFontSize: 14,
+          left,
+          width,
+          height,
+          top,
+          scale,
         });
       }
       return array;
     };
-
     const selectBox = (item, event) => {
       //阻止冒泡
       event.stopPropagation();
-      state.drawer = true;
-      state.gridList.forEach((child, index) => {
-        if (item.id == child.id) {
-          child.selected = true;
-          state.selectId = index;
-          selectItemInfo(index);
-        } else {
-          child.selected = false;
-        }
-      });
+       state.selectId = item.id;
+      // state.gridList.forEach((child, index) => {
+      //   if (item.id == child.id) {
+      //     child.selected = true;
+      //     state.selectId = index;
+      //   } else {
+      //     child.selected = false;
+      //   }
+      // });
+    };
+    const editorBox = (item, event) => {
+      //阻止冒泡
+      event.stopPropagation();
+      state.selectId = item.id;
+      selectItemInfo(item.id);
+
     };
     //选择单一宫格
     const selectItemInfo = (index) => {
       state.dialog = true;
-      const res = state.gridList[index];
-      console.log("res", res);
+      let list = state.gridList;
+      const res = list.find((item)=>item.id == index);
       state.lastSelect = {
         width: res.width,
         height: res.height,
@@ -354,23 +421,15 @@ export default {
       };
     };
     const xChange = () => {
+      console.log('id',state.selectId)
       state.gridList[state.selectId].left = state.selectInfo.left;
     };
     const yChange = () => {
       state.gridList[state.selectId].top = state.selectInfo.top;
     };
-    const itemWidthChange = (item) => {
-      let scale = 9 / 16;
-      item.height = item.width * scale;
-    };
-    const itemHeightChange = (item) => {
-      let scale = 16/9;
-      item.width = item.height * scale;
-    };
+
     const setDArea = () => {
       state.dAreaLog = true;
-      (state.initMoitorList.length = state.monitorNum);
-      console.log("initMoitorList", state.initMoitorList);
     };
     //改变比例大小
     const scaleChange = () => {
@@ -385,26 +444,22 @@ export default {
       selectItem.width = state.selectInfo.width;
       selectItem.height = state.selectInfo.height;
     };
-    const widthChange = () => {
+    const widthChange = (boxObj) => {
       let scale = 9 / 16;
-      const width = state.selectInfo.width;
+      const width = boxObj.width;
       let height = width * scale;
-      state.selectInfo.height = height;
+      boxObj.height = height;
     };
-    const heightChange = () => {
+    const heightChange = (boxObj) => {
       let scale = 16 / 9;
-      const height = state.selectInfo.height;
+      const height = boxObj.height;
       let width = height * scale;
-      state.selectInfo.width = width;
-    };
-    const numChange = () => {
-      state.initMoitorList.length = state.monitorNum;
-      state.initMoitorList = initList(state.monitorNum);
+      boxObj.width = width;
     };
 
     //确认
     const submit = () => {
-      state.gridList = state.initMoitorList;
+      state.gridList = initList(state.monitorTmp);
       //更新选中位置信息
       nextTick(() => {
         initPos(domlist);
@@ -439,44 +494,101 @@ export default {
     };
 
     const add = () => {
+      state.dAreaLog = false;
       state.gridList.push({
         id: state.gridList.length,
-        selected: false,
-        color: "",
-        boxFontSize: 14,
+        ...state.monitorTmp,
       });
-      num.value = state.gridList.length;
-      nextTick(() => {
-        initPos(domlist);
-      });
+      state.monitorTmp.number = Number(state.monitorTmp.number);
+      state.monitorTmp.number += 1;
+      // nextTick(() => {
+      //   initPos(domlist);
+      // });
+    };
+    const setBArea = () => {
+      state.bAreaLog = true;
     };
 
-    onMounted(() => {
-      // changeGrid(num.value);
-    });
+    //初始化监控列表
+    const initMonitorList = () => {
+      axios
+        .get(
+          `api/cs_foreignscreen/api/queryMonitorInfoList?pageNum=1&pageSize=10&tagTap=&xzqh=320102&inputName=`
+        )
+        .then(({ data }) => {
+          state.monitorList = data.data;
+        });
+    };
+    //填充监控
+    const fillMointor = (item, $event) => {
+      event.stopPropagation();
+      // if (!state.gridList[state.selectId].selected) return;
+      state.gridList[state.selectId] = {
+        ...item,
+        ...state.gridList[state.selectId],
+      };
+      setMonitorSrc(item.videoStream);
+      // state.gridList[state.selectId].selected = false;
+    };
+    //获取监控流
+    const setMonitorSrc = async (id) => {
+      const { data } = await axios.get(
+        `api/cs-dataintegrate/api/HkArtemis/getCameraPreviewURL?cameraIndexCode=${id}&xzqh=320102`
+      );
+      state.gridList[state.selectId].src = data.result.content.url;
+
+      state.gridList[state.selectId].videoOption = {
+        live: false,
+        preload: "auto",
+        autoplay: true,
+        language: "zh-CN",
+        aspectRatio: "16:9",
+        fluid: true,
+        sources: [
+          {
+            src: data.result.content.url, //url地址
+          },
+        ],
+        notSupportedMessage: "此视频暂无法播放，请稍后再试", //允许覆盖Video.js无法播放媒体源时显示的默认信息。
+        controlBar: {
+          timeDivider: false,
+          durationDisplay: false,
+          remainingTimeDisplay: false,
+          fullscreenToggle: true, //全屏按钮
+        },
+        flash: {
+          hls: {
+            withCredentials: false,
+          },
+        },
+      };
+    };
+    initMonitorList();
+    onMounted(() => {});
 
     return {
       ...toRefs(state),
       gridBox,
       changeGrid,
       cancelForm,
-      selectBox,
+      editorBox,
       domlist,
       handleClose,
       submit,
       deleteBox,
       widthChange,
       heightChange,
-      itemWidthChange,
-      itemHeightChange,
       num,
       add,
       dArea,
+      bArea,
       xChange,
       yChange,
       scaleChange,
       setDArea,
-      numChange,
+      setBArea,
+      selectBox,
+      fillMointor,
     };
   },
 };
@@ -510,6 +622,13 @@ export default {
   position: relative;
   height: 100%;
   width: 100%;
+  .d-area-left {
+    margin-left: 0 !important;
+  }
+  .right-pos {
+    left: auto !important;
+    right: 0;
+  }
   .left-container {
     width: 30%;
     height: 100%;
@@ -520,9 +639,38 @@ export default {
     align-items: center;
     justify-content: center;
     font-size: 30px;
+    flex-direction: column;
+    cursor: pointer;
+    .left-top-container {
+      @include wh(100%, 30%);
+      border: 1px solid black;
+      @include fa();
+      justify-content: center;
+    }
+    .left-bottom-container {
+      @include wh(100%, 70%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+  }
+  .monitor-list {
+    @include wh(90%, 90%);
+    flex-direction: column;
+    @include fa();
+    font-size: 20px;
+    border: 1px solid red;
+    .monitor-item {
+      box-sizing: border-box;
+      padding-left: 2%;
+      @include wh(100%, 10%);
+      display: flex;
+      align-items: center;
+    }
   }
   .d-area {
-    width: calc(100vw - 30%);
+    width: 70%;
     height: 100%;
     margin-left: 30%;
     @include fa();
@@ -531,7 +679,11 @@ export default {
     cursor: pointer;
   }
 }
-
+.b-area {
+  @include wh(100%, auto);
+  padding-left: 20px;
+  display: flex;
+}
 .info-size {
   width: 200px;
 }
@@ -541,9 +693,9 @@ export default {
   bottom: 24px;
   right: 24px;
 }
-.demo-drawer__content{
-  transform:translate(0);
-  min-height:100%
+.demo-drawer-content {
+  transform: translate(0);
+  min-height: 100%;
 }
 .demo-drawer__footer {
   position: fixed;
@@ -571,7 +723,7 @@ export default {
     position: absolute;
   }
   .selected {
-    border: 1px solid red !important;
+    border: 1px solid blue !important;
   }
 }
 .box-top {
@@ -582,11 +734,16 @@ export default {
   padding-left: 4%;
   box-sizing: border-box;
   margin-bottom: 3%;
+  position: relative;
   .box-status {
     @include wh(10px, 10px);
     border-radius: 50%;
     background: #5bd684;
     margin-right: 8px;
+  }
+  .box-btn {
+    position: absolute;
+    right: 2%;
   }
 }
 .box-contaner {
@@ -598,6 +755,9 @@ export default {
     @include wh(60%, 90%);
     border: 1px solid red;
     margin-right: 3%;
+    .monitor-video {
+      @include wh(100%, 100%);
+    }
   }
   .monitor-info {
     display: flex;

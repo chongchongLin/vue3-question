@@ -40,5 +40,19 @@ module.exports = {
             },
         };
     },
+    devServer: {
+      proxy: {
+          "/api": {
+
+              target: "https://nebula.handsmap.cn/appproxy/gateway/",
+              ws: false,
+              //将主机头的原点改为目标的url地址
+              changeOrgin: true,
+              pathRewrite: {
+                  "^/api": "",
+              },
+          },
+      },
+  },
     lintOnSave: false
 }

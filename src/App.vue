@@ -120,6 +120,8 @@ body {
 .el-drawer, .d-area-drawer{
   overflow: scroll !important;
 }
-
+.video-js{
+  height: 100% !important;
+}
 
 </style>
