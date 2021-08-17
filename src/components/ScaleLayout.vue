@@ -1,15 +1,4 @@
-/* 
-  思考
-    1.是否可以把initMointorList替换成gridList？
-    // 不能,如果是同一个变量就不需要确认按钮了
-    2.设置完D区域后,再点击D区域是否应该已展示已有信息？
-    //是
-    3.新增单个监控如何进行？
-    4.是否需要确认按钮？
-    
-  未完成
-    1.接数据进行测试
- */
+
 <template>
   <div class="grid-container">
     <header class="nav-bar">可配置模块A</header>
@@ -40,6 +29,26 @@
         @click="setDArea"
         :class="bAreaBtn == '靠右' ? 'd-area-left' : ''"
       >
+        <div class="width-scale">
+          <div
+            class="scale-item"
+            :style="{ left: item + 'px' }"
+            v-for="(item, index) in widthScaleList"
+            :key="index"
+          >
+            <span>{{ item }}</span>
+          </div>
+        </div>
+        <div class="height-scale">
+          <div
+            class="scale-item"
+            :style="{ top: item + 'px' }"
+            v-for="(item, index) in heightScaleList"
+            :key="index"
+          >
+            <span>{{ item }}</span>
+          </div>
+        </div>
         <div class="grid-box" :class="[gridMode]" ref="gridBox">
           <div
             :ref="(el) => (domlist[index] = el)"
@@ -54,10 +63,9 @@
               top: item.top + 'px',
               fontSize: item.boxFontSize + 'px',
             }"
-            :class="item.id==selectId?'selected':''"
+            :class="item.id == selectId ? 'selected' : ''"
             @click="selectBox(item, $event)"
           >
-
             <div class="box-top">
               <div class="box-status"></div>
               <div class="box-title">{{ item.name }}</div>
@@ -302,6 +310,9 @@ export default {
     const domlist = ref([]);
     const num = ref(1);
     const state = reactive({
+      widthScaleList: [],
+      heightScaleList: [],
+      selectIndex: 0,
       monitorList: [],
       bAreaBtn: "靠左",
       bAreaBtnList: [
@@ -384,28 +395,20 @@ export default {
     const selectBox = (item, event) => {
       //阻止冒泡
       event.stopPropagation();
-       state.selectId = item.id;
-      // state.gridList.forEach((child, index) => {
-      //   if (item.id == child.id) {
-      //     child.selected = true;
-      //     state.selectId = index;
-      //   } else {
-      //     child.selected = false;
-      //   }
-      // });
+      state.selectId = item.id;
     };
     const editorBox = (item, event) => {
       //阻止冒泡
       event.stopPropagation();
       state.selectId = item.id;
       selectItemInfo(item.id);
-
     };
     //选择单一宫格
     const selectItemInfo = (index) => {
       state.dialog = true;
       let list = state.gridList;
-      const res = list.find((item)=>item.id == index);
+      state.selectIndex = list.findIndex((item) => item.id == index);
+      const res = list.find((item) => item.id == index);
       state.lastSelect = {
         width: res.width,
         height: res.height,
@@ -421,11 +424,10 @@ export default {
       };
     };
     const xChange = () => {
-      console.log('id',state.selectId)
-      state.gridList[state.selectId].left = state.selectInfo.left;
+      state.gridList[state.selectIndex].left = state.selectInfo.left;
     };
     const yChange = () => {
-      state.gridList[state.selectId].top = state.selectInfo.top;
+      state.gridList[state.selectIndex].top = state.selectInfo.top;
     };
 
     const setDArea = () => {
@@ -467,17 +469,6 @@ export default {
       state.dAreaLog = false;
     };
 
-    //宫格转换
-    const changeGrid = (initObj) => {
-      state.gridList = [];
-      state.gridList = initList(initObj);
-      const { offsetWidth, offsetHeight } = dArea.value;
-      state.dAreaObj.width = offsetWidth;
-      state.dAreaObj.height = offsetHeight;
-      nextTick(() => {
-        initPos(domlist);
-      });
-    };
     const cancelForm = () => {
       state.dialog = false;
       state.loading = false;
@@ -488,7 +479,8 @@ export default {
     };
     //删除格子
     const deleteBox = () => {
-      state.gridList.splice(state.selectId, 1);
+      state.gridList.splice(state.selectIndex, 1);
+      state.monitorTmp.number -= 1;
       num.value = state.gridList.length;
       state.dialog = false;
     };
@@ -522,22 +514,20 @@ export default {
     //填充监控
     const fillMointor = (item, $event) => {
       event.stopPropagation();
-      // if (!state.gridList[state.selectId].selected) return;
-      state.gridList[state.selectId] = {
+      state.gridList[state.selectIndex] = {
         ...item,
-        ...state.gridList[state.selectId],
+        ...state.gridList[state.selectIndex],
       };
       setMonitorSrc(item.videoStream);
-      // state.gridList[state.selectId].selected = false;
     };
     //获取监控流
     const setMonitorSrc = async (id) => {
       const { data } = await axios.get(
         `api/cs-dataintegrate/api/HkArtemis/getCameraPreviewURL?cameraIndexCode=${id}&xzqh=320102`
       );
-      state.gridList[state.selectId].src = data.result.content.url;
+      state.gridList[state.selectIndex].src = data.result.content.url;
 
-      state.gridList[state.selectId].videoOption = {
+      state.gridList[state.selectIndex].videoOption = {
         live: false,
         preload: "auto",
         autoplay: true,
@@ -563,13 +553,32 @@ export default {
         },
       };
     };
+    //获取d区域宽高
+    const getDAreaSize = () => {
+      const { offsetWidth, offsetHeight } = dArea.value;
+      state.widthScaleList = getScaleList(50, offsetWidth);
+      let heightList = getScaleList(50, offsetHeight);
+      heightList.splice(0, 1);
+      state.heightScaleList = heightList;
+      console.log("list", state.widthScaleList);
+    };
+    //生成刻度数组
+    const getScaleList = (scale, total) => {
+      let scaleList = [];
+      for (let i = 0; i < total; i++) {
+        scaleList.push(i);
+      }
+      scaleList = scaleList.filter((item) => item % scale == 0);
+      return scaleList;
+    };
     initMonitorList();
-    onMounted(() => {});
+    onMounted(() => {
+      getDAreaSize();
+    });
 
     return {
       ...toRefs(state),
       gridBox,
-      changeGrid,
       cancelForm,
       editorBox,
       domlist,
@@ -616,11 +625,13 @@ export default {
   position: absolute;
   top: 0;
   margin: 0;
+  // overflow: hidden;
 }
 .container {
   display: flex;
   position: relative;
-  height: 100%;
+  // height: 100%;
+  height: calc(100vh - 73px);
   width: 100%;
   .d-area-left {
     margin-left: 0 !important;
@@ -677,6 +688,47 @@ export default {
     flex-direction: column;
     border: 1px solid black;
     cursor: pointer;
+    position: relative;
+  }
+}
+.width-scale {
+  position: absolute;
+  @include wh(100%, 20px);
+  top: 0;
+  left: 0;
+  display: flex;
+  .scale-item {
+    font-size: 12px;
+    position: absolute;
+    border-left: 1px solid red;
+    height: 5px;
+    span {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 2px;
+    }
+  }
+  .scale-item:nth-child(1) {
+    left: 1px !important;
+  }
+}
+.height-scale {
+  position: absolute;
+  @include wh(20px, 100%);
+  top: 0;
+  left: 0;
+  display: flex;
+  .scale-item {
+    font-size: 12px;
+    position: absolute;
+    @include wh(5px, 1%);
+    border-top: 1px solid red;
+    span {
+      position: absolute;
+      transform: translateY(-50%);
+      left: 8px;
+    }
   }
 }
 .b-area {
