@@ -3,6 +3,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const PrerenderSPAPlugin = require('prerender-spa-plugin');
 const Renderer = PrerenderSPAPlugin.PuppeteerRenderer;
 const path = require('path');
+//新增token配置
 module.exports = {
     configureWebpack: config => {
         if (process.env.NODE_ENV !== 'production') return;
