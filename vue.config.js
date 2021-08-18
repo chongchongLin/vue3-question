@@ -26,33 +26,35 @@ module.exports = {
                         renderAfterDocumentEvent: 'render-event'
                     })
                 }),
-            
+
             ],
             optimization: {
                 minimizer: [
-                  new TerserPlugin({
-                    terserOptions: {
-                      compress: {
-                        drop_console: true,
-                      }
-                    }
-                  })
+                    new TerserPlugin({
+                        terserOptions: {
+                            compress: {
+                                drop_console: true,
+                            }
+                        }
+                    })
                 ]
             },
         };
     },
     devServer: {
-      proxy: {
-          "/api": {
-              target: "https://nebula.handsmap.cn/appproxy/gateway/",
-              ws: false,
-              //将主机头的原点改为目标的url地址
-              changeOrgin: true,
-              pathRewrite: {
-                  "^/api": "",
-              },
-          },
-      },
-  },
+        disableHostCheck: true,
+        port: 8080,
+        proxy: {
+            "/api": {
+                target: "https://nebula.handsmap.cn/appproxy/gateway/",
+                ws: false,
+                //将主机头的原点改为目标的url地址
+                changeOrgin: true,
+                pathRewrite: {
+                    "^/api": "",
+                },
+            },
+        },
+    },
     lintOnSave: false
 }

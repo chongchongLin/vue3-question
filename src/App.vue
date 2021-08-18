@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <!-- <iframe src="http://aaa.bb.com:8081/unifiedPlatform/toPage?xzqh=320100&param=2Cq7NZqeVEJ4yEkA%2Bm6h5iOjGxaHfGmnzKSWGWdEfkrVImHYMsP6%2FB7birdD+tVZKK0e%2Fc8uRNVsYPbbV5IwcswnwwYdmgTRZa9a%2B2DljUeDPfi7lvTISf3lu+lGrH75B05uxkhkKw1TTYhtAjL1ohA1TMeg1x0a9vUTpnzbryd919Sf%2FGFumT+SSL9ZKLVRzZbi1F2oNaNBd1bnT6OPFtfZSF%2BXVjyrFcNE%2FiiZQtq%2FcaTWHeq+zSArEA%3D%3D" frameborder="0"></iframe> -->
+
     <nav-header v-if="route.meta.isHeader"></nav-header>
     <router-view class="router-view"> </router-view>
     <web-footer v-if="route.meta.isHeader"></web-footer>

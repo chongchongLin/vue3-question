@@ -1,7 +1,12 @@
 
 <template>
   <div class="grid-container">
-    <header class="nav-bar">可配置模块A</header>
+    <div class="bg-img">
+      <img :src="bgImg" alt="" />
+    </div>
+    <header class="nav-bar">
+      <img src="@/assets/imgs/header.svg" alt="" />
+    </header>
     <div class="container">
       <div
         class="left-container"
@@ -9,16 +14,56 @@
         @click="setBArea"
         :class="bAreaBtn == '靠右' ? 'right-pos' : ''"
       >
-        <div class="left-top-container">可配置模块B</div>
-        <div class="left-bottom-container">
-          <div class="monitor-list">
-            <div
-              class="monitor-item"
-              v-for="(item, index) in monitorList"
-              :key="index"
-              @click="fillMointor(item, $event)"
-            >
-              {{ item.name }}
+        <!-- <img :src="listImg" alt=""> -->
+        <div class="left-box" :style="{ backgroundImage: `url(${listImg})` }">
+          <div class="left-top-container">
+            <div class="left-title">视频监控</div>
+            <div class="btn-group">
+              <div
+                class="left-btn"
+                :style="{ background: `url(${btnDefault})` }"
+              >
+                售票处
+              </div>
+            </div>
+            <div class="serach-ipt">
+              <span class="ipt-icon">
+                <img src="@/assets/imgs/icon-search.svg" alt="" />
+              </span>
+              <input type="text" class="ipt" placeholder="搜索景区名称" />
+            </div>
+          </div>
+          <div class="left-bottom-container">
+            <div class="monitor-list">
+              <div
+                class="monitor-item"
+                v-for="(item, index) in monitorList"
+                :key="index"
+                @click="fillMointor(item, $event)"
+              >
+                <span class="monitor-icon">
+                  <img src="@/assets/imgs/monitor-icon.svg" alt="" />
+                </span>
+                <span>{{ item.name }}</span>
+              </div>
+            </div>
+            <div class="list-footer">
+              <div class="page-info">
+                <div class="page-size">
+                  共
+                  <span class="page-num">304</span>
+                  个，
+                </div>
+                <div class="page-size">
+                  第
+                  <span class="cur-page">1</span>
+                  /34页
+                </div>
+              </div>
+              <div class="page-btns">
+                <div class="page-btn">上一页</div>
+                <div class="page-btn next-btn">下一页</div>
+              </div>
             </div>
           </div>
         </div>
@@ -63,13 +108,15 @@
               top: item.top + 'px',
               fontSize: item.boxFontSize + 'px',
             }"
-            :class="item.id == selectId ? 'selected' : ''"
-            @click="selectBox(item, $event)"
+            :class="item.selected ? 'selected' : ''"
+            @click="selectBox(item, $event, false)"
           >
             <div class="box-top">
               <div class="box-status"></div>
               <div class="box-title">{{ item.name }}</div>
-              <div class="box-btn" @click="editorBox(item, $event)">编辑</div>
+              <div class="box-btn" @click="selectBox(item, $event, true)">
+                编辑
+              </div>
             </div>
             <div class="box-contaner">
               <div class="monitor-box">
@@ -310,6 +357,9 @@ export default {
     const domlist = ref([]);
     const num = ref(1);
     const state = reactive({
+      bgImg: require("@/assets/imgs/bg.jpg"),
+      listImg: require("@/assets/imgs/list.png"),
+      btnDefault: require("@/assets/imgs/btn-default.png"),
       widthScaleList: [],
       heightScaleList: [],
       selectIndex: 0,
@@ -330,8 +380,8 @@ export default {
         color: "",
         boxFontSize: 14,
         left: 0,
-        width: 0,
-        height: 0,
+        width: 400,
+        height: 225,
         top: 0,
         scale: 1,
         number: 1,
@@ -392,20 +442,23 @@ export default {
       }
       return array;
     };
-    const selectBox = (item, event) => {
+
+    const selectBox = (item, event, status) => {
       //阻止冒泡
       event.stopPropagation();
-      state.selectId = item.id;
-    };
-    const editorBox = (item, event) => {
-      //阻止冒泡
-      event.stopPropagation();
-      state.selectId = item.id;
-      selectItemInfo(item.id);
+      state.gridList.forEach((child) => {
+        if (item.id == child.id) {
+          state.selectId = item.id;
+          selectItemInfo(item.id, status);
+          child.selected = true;
+        } else {
+          child.selected = false;
+        }
+      });
     };
     //选择单一宫格
-    const selectItemInfo = (index) => {
-      state.dialog = true;
+    const selectItemInfo = (index, status) => {
+      state.dialog = status ? true : false;
       let list = state.gridList;
       state.selectIndex = list.findIndex((item) => item.id == index);
       const res = list.find((item) => item.id == index);
@@ -513,11 +566,16 @@ export default {
     };
     //填充监控
     const fillMointor = (item, $event) => {
+      let selectStatus = state.gridList.every((item) => item.selected == false);
+      if (selectStatus) return;
       event.stopPropagation();
-      state.gridList[state.selectIndex] = {
-        ...item,
-        ...state.gridList[state.selectIndex],
-      };
+      console.log("item", item);
+      // state.gridList[state.selectIndex] = {
+      //   ...item,
+      //   ...state.gridList[state.selectIndex],
+      // };
+      state.gridList[state.selectIndex].name = item.name;
+      console.log("itemLast", state.gridList[state.selectIndex]);
       setMonitorSrc(item.videoStream);
     };
     //获取监控流
@@ -526,7 +584,6 @@ export default {
         `api/cs-dataintegrate/api/HkArtemis/getCameraPreviewURL?cameraIndexCode=${id}&xzqh=320102`
       );
       state.gridList[state.selectIndex].src = data.result.content.url;
-
       state.gridList[state.selectIndex].videoOption = {
         live: false,
         preload: "auto",
@@ -552,6 +609,7 @@ export default {
           },
         },
       };
+      state.gridList[state.selectIndex].selected = false;
     };
     //获取d区域宽高
     const getDAreaSize = () => {
@@ -580,7 +638,6 @@ export default {
       ...toRefs(state),
       gridBox,
       cancelForm,
-      editorBox,
       domlist,
       handleClose,
       submit,
@@ -606,13 +663,23 @@ export default {
 <style lang="scss" scoped>
 @import "@/common/mixin.scss";
 .nav-bar {
-  @include wh(100%, 72px);
+  @include wh(100%, 11.1%);
   border: 1px solid black;
   text-align: center;
   font-size: 24px;
   display: flex;
   justify-content: center;
   align-items: center;
+  img {
+    width: 100%;
+    object-fit: cover;
+    flex-shrink: 0;
+    image-rendering: -moz-crisp-edges; /* Firefox */
+    image-rendering: -o-crisp-edges; /* Opera */
+    image-rendering: -webkit-optimize-contrast; /*Webkit (non-standard naming) */
+    image-rendering: crisp-edges;
+    -ms-interpolation-mode: nearest-neighbor; /* IE (non-standard property) */
+  }
   .box-num {
     width: 10%;
     margin-right: 4%;
@@ -627,11 +694,22 @@ export default {
   margin: 0;
   // overflow: hidden;
 }
+.bg-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+  img {
+    @include wh(100%, 100%);
+  }
+}
 .container {
   display: flex;
   position: relative;
   // height: 100%;
-  height: calc(100vh - 73px);
+  height: calc(100vh - 11.1%);
   width: 100%;
   .d-area-left {
     margin-left: 0 !important;
@@ -647,37 +725,93 @@ export default {
     left: 0;
     border: 1px solid black;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 30px;
+    font-size: 18px;
     flex-direction: column;
+    color: #ffffff;
+    padding-left: 40px;
+    padding-top: 20px;
+    box-sizing: border-box;
     cursor: pointer;
-    .left-top-container {
-      @include wh(100%, 30%);
-      border: 1px solid black;
-      @include fa();
-      justify-content: center;
+    .left-bg-img {
+      position: absolute;
+      @include wh(100%, 100%);
     }
-    .left-bottom-container {
-      @include wh(100%, 70%);
+  }
+  .left-box {
+    @include wh(100%, 94.7%);
+    @include fa();
+    justify-content: center;
+    flex-direction: column;
+    background-size: 100% 100%;
+    position: relative;
+    .left-top-container {
+      @include wh(91.6%, 20.8%);
+      // border-bottom: 1px dashed #173154;
+      border-bottom: 1px dashed white;
       display: flex;
       flex-direction: column;
-      justify-content: center;
-      align-items: center;
+      box-sizing: border-box;
+      padding-bottom: 2%;
+    }
+    .left-bottom-container {
+      @include wh(91.6%, 79.2%);
+      display: flex;
+      flex-direction: column;
     }
   }
   .monitor-list {
-    @include wh(90%, 90%);
+    @include wh(100%, 83%);
     flex-direction: column;
     @include fa();
-    font-size: 20px;
-    border: 1px solid red;
+    margin-top: 2%;
+    font-size: 18px;
     .monitor-item {
       box-sizing: border-box;
-      padding-left: 2%;
       @include wh(100%, 10%);
       display: flex;
       align-items: center;
+    }
+  }
+  .monitor-icon {
+    @include wh(20px, 16px);
+    margin-right: 8px;
+    img {
+      display: block;
+    }
+  }
+  .list-footer {
+    @include wh(91.6%, auto);
+    position: absolute;
+    bottom: 2.7%;
+    display: flex;
+    justify-content: space-between;
+  }
+  .page-info {
+    display: flex;
+    color: rgba(255, 255, 255, 0.8);
+    font-family: MicrosoftYaHei;
+    letter-spacing: 0;
+    font-weight: 400;
+    .page-num {
+      color: rgba(255, 255, 255, 1);
+    }
+    .cur-page {
+      color: #5cbfe5;
+    }
+  }
+  .page-btns {
+    display: flex;
+    color: #5cbfe5;
+    .page-btn {
+      @include wh(74px, 34px);
+      border: 1px solid #5cbfe5;
+      border-radius: 4px;
+      @include fa();
+      justify-content: center;
+      margin-right: 16px;
+    }
+    .next-btn {
+      margin-right: 0;
     }
   }
   .d-area {
@@ -689,6 +823,62 @@ export default {
     border: 1px solid black;
     cursor: pointer;
     position: relative;
+  }
+}
+.left-title {
+  @include wh(100%, 30%);
+  display: flex;
+  align-items: center;
+}
+.btn-group {
+  display: flex;
+  margin-top: 5%;
+  height: 38px;
+  .left-btn {
+    background-image: radial-gradient(
+      rgba(29, 167, 235, 0.32) 50%,
+      rgba(0, 92, 245, 0) 100%
+    );
+    border: 1px solid rgba(70, 191, 255, 0.55);
+    box-shadow: inset 0 0 6px 0 #4f7ec8;
+    border-radius: 4px;
+    @include wh(80px, 100%);
+    font-size: 16px;
+    @include fa();
+    justify-content: center;
+  }
+}
+.serach-ipt {
+  @include wh(100%, 40px);
+  margin-top: 16px;
+  background: rgba(75, 158, 217, 0.2);
+  border: 1px solid #4b9ed9;
+  border-radius: 4px;
+  @include fa();
+  position: relative;
+  .ipt-icon {
+    position: absolute;
+    @include wh(16px, 16px);
+    left: 16px;
+    img {
+      display: block;
+    }
+  }
+  .ipt {
+    @include wh(70%, 100%);
+    background: transparent;
+    border: none;
+    box-sizing: border-box;
+    padding-left: 42px;
+  }
+  .ipt:focus {
+    outline: none;
+  }
+  .ipt::placeholder {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.45);
+    letter-spacing: 0;
+    font-weight: 400;
   }
 }
 .width-scale {
