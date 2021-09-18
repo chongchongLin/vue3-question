@@ -101,14 +101,13 @@
             v-for="(item, index) in gridList"
             :key="item"
             :style="{
-              background: item.color,
+              backgroundImage:item.selected?`url(${selctImg})`:`url(${videoImg})`,
               width: item.width + 'px',
               height: item.height + 'px',
               left: item.left + 'px',
               top: item.top + 'px',
               fontSize: item.boxFontSize + 'px',
             }"
-            :class="item.selected ? 'selected' : ''"
             @click="selectBox(item, $event, false)"
           >
             <div class="box-top">
@@ -117,6 +116,9 @@
               <div class="box-btn" @click="selectBox(item, $event, true)">
                 编辑
               </div>
+            </div>
+            <div class="close-btn">
+              <img src="@/assets/imgs/close-monitor.svg" alt="" />
             </div>
             <div class="box-contaner">
               <div class="monitor-box">
@@ -130,12 +132,12 @@
                 </video-player>
               </div>
               <div class="monitor-info">
-                <div class="moitor-name"></div>
-                <div class="moitor-name"></div>
-                <div class="moitor-name"></div>
-                <div class="moitor-name safe-person"></div>
-                <div class="moitor-name"></div>
-                <div class="moitor-name safe-phone"></div>
+                <div class="moitor-name-tag">景区负责人</div>
+                <div class="moitor-name">王多余</div>
+                <div class="info-num">12345678901</div>
+                <div class="moitor-name-tag safe-person">景区负责人</div>
+                <div class="moitor-name">王多余</div>
+                <div class="info-num safe-phone">12345678901</div>
               </div>
             </div>
           </div>
@@ -360,6 +362,8 @@ export default {
       bgImg: require("@/assets/imgs/bg.jpg"),
       listImg: require("@/assets/imgs/list.png"),
       btnDefault: require("@/assets/imgs/btn-default.png"),
+      videoImg: require("@/assets/imgs/video-bg.png"),
+      selctImg:require("@/assets/imgs/select-video.png"),
       widthScaleList: [],
       heightScaleList: [],
       selectIndex: 0,
@@ -377,11 +381,10 @@ export default {
       ],
       monitorTmp: {
         selected: false,
-        color: "",
         boxFontSize: 14,
         left: 0,
-        width: 400,
-        height: 225,
+        width: 448,
+        height: 252,
         top: 0,
         scale: 1,
         number: 1,
@@ -402,7 +405,17 @@ export default {
         boxFontSize: 14,
         scale: 1,
       },
-      gridList: [],
+      gridList: [
+        {
+          width: 448,
+          height: 252,
+          number: 1,
+          top: 0,
+          left: 0,
+          boxFontSize: 14,
+          scale: 1,
+        },
+      ],
       gridMode: "",
       selectId: "",
       drawer: false,
@@ -431,7 +444,6 @@ export default {
         array.push({
           id: i,
           selected: false,
-          color: "",
           boxFontSize: 14,
           left,
           width,
@@ -473,7 +485,7 @@ export default {
         boxFontSize: res.boxFontSize,
         left: res.left,
         top: res.top,
-        scale: res.width / 400,
+        scale: res.width / 448,
       };
     };
     const xChange = () => {
@@ -490,14 +502,15 @@ export default {
     const scaleChange = () => {
       if (!state.selectInfo.scale) return;
       let selectItem = state.gridList[state.selectId];
+      console.log('scale',state.selectInfo)
       let { width, height, scale } = state.selectInfo;
       //暂定死值
-      state.selectInfo.width = 400 * scale;
-      state.selectInfo.height = 225 * scale;
+      state.selectInfo.width = 448 * scale;
+      state.selectInfo.height = 252 * scale;
       selectItem.scale = state.selectInfo.scale;
-
       selectItem.width = state.selectInfo.width;
       selectItem.height = state.selectInfo.height;
+
     };
     const widthChange = (boxObj) => {
       let scale = 9 / 16;
@@ -948,34 +961,30 @@ export default {
   width: 100%;
   display: flex;
   flex-wrap: wrap;
-  // justify-content: space-around;
   box-sizing: border-box;
-  // padding-left: 24px;
-  // padding-right: 24px;
   position: relative;
   .grid-box-item {
     display: flex;
-    align-items: center;
-    border: 1px solid black;
     cursor: pointer;
     flex-direction: column;
-    // margin-top: 24px;
-    box-sizing: border-box;
-    @include wh(400px, 225px);
+    @include wh(448px, 252px);
     position: absolute;
+    background-repeat:no-repeat;
+    background-size:100% 100%;
+
   }
   .selected {
-    border: 1px solid blue !important;
   }
 }
 .box-top {
-  @include wh(100%, 10%);
+  @include wh(87%, 9.5%);
+  margin-left: 5%;
+  margin-top: 3.5%;
   border: 1px solid red;
   display: flex;
   align-items: center;
-  padding-left: 4%;
   box-sizing: border-box;
-  margin-bottom: 3%;
+  margin-bottom: 3.5%;
   position: relative;
   .box-status {
     @include wh(10px, 10px);
@@ -988,13 +997,19 @@ export default {
     right: 2%;
   }
 }
+.close-btn {
+  @include wh(18px, 18px);
+  position: absolute;
+  right: 16.5px;
+  top: 16.6px;
+}
 .box-contaner {
-  @include wh(100%, 75%);
-  padding-left: 4%;
+  @include wh(auto, 71%);
   box-sizing: border-box;
+  margin-left: 5%;
   display: flex;
   .monitor-box {
-    @include wh(60%, 90%);
+    @include wh(68%, 100%);
     border: 1px solid red;
     margin-right: 3%;
     .monitor-video {
@@ -1004,15 +1019,33 @@ export default {
   .monitor-info {
     display: flex;
     flex-direction: column;
-    @include wh(30%, 90%);
+    @include wh(22%, 100%);
     border: 1px solid red;
+    font-family: MicrosoftYaHei;
+    font-size: 14px;
+    color: #46bbff;
+    letter-spacing: 0;
+    font-weight: 400;
+    box-sizing: border-box;
+    padding: 1% 0%;
+    .moitor-name-tag{
+      color: #ffffff;
+      margin-bottom: 7%;
+      @include wh(100%,14%);
+      border: 1px solid red;
+      display: flex;
+      align-items: center;
+      box-sizing: border-box;
+      padding-left: 8px;
+    }
     .moitor-name {
+      margin-bottom: 8%;
     }
     .safe-phone {
-      font-size: 1.1em;
+      // font-size: 1.1em;
     }
     .safe-person {
-      margin-top: 3%;
+      margin-top: 24% !important;
     }
   }
 }

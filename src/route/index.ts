@@ -20,6 +20,18 @@ const router = createRouter({
       },
     },
     {
+      path: "/gold-chan-chan",
+      name: "gold",
+      component: () =>
+        import(/* webpackChunkName: "gold" */ "@/views/Gold.vue"),
+      meta: {
+        title: '金铲铲',
+        index: 1,
+        isHeader:true,
+
+      },
+    },
+    {
       path: "/wage",
       name: "wage",
       component: () =>
@@ -75,7 +87,7 @@ const router = createRouter({
       },
     },
     {
-      path: '/scaleLayout',
+      path: '/scale-layout',
       name: "scaleLayout",
       component: () =>
         import(/* webpackChunkName: "home" */ "@/components/ScaleLayout.vue"),

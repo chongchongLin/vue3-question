@@ -45,10 +45,15 @@ export default {
           name: "flex宫格",
           id: 4,
         },
-         {
-          path: "/scaleLayout",
+        {
+          path: "/scale-layout",
           name: "比例宫格",
           id: 5,
+        },
+        {
+          path: "/gold-chan-chan",
+          name: "金铲铲",
+          id: 6,
         },
       ],
     });
