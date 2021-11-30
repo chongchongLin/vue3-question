@@ -20,7 +20,6 @@
         {{ item.content }}
       </div>
     </div>
-      <button @click="jump">跳转</button>
   </div>
 </template>
 
@@ -61,9 +60,6 @@ export default {
     }));
   },
   methods: {
-    jump(){
-      window.location.href='http://localhost:8080/#/pageModule/countyModule/library/library'
-    },
     close(index) {
       for (let item of this.list) {
         if (index.id == item.id) {
