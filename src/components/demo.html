@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  .box {
+    width: 200px;
+    height: 300px;
+    border: 1px solid red;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+</style>
+
+<body>
+
+</body>
+<script>
+
+  let arr = [1,2,-1,4];
+var maxSubArray = function(nums) {
+    let temp=nums[0];
+    let total = temp;
+    for(let i=1;i<nums.length;i++){
+        if(temp+nums[i]>nums[i]){
+            total = Math.max(total,nums[i]+temp)
+            temp = temp+nums[i];
+        }else{
+            total = Math.max(temp,total,temp+nums[i],nums[i])
+            temp = nums[i];
+        }
+    }
+    return total
+};
+
+
+//temp=1,
+</script>
+
+</html>

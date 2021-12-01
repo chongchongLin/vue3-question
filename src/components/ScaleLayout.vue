@@ -342,7 +342,7 @@
 </template>
 
 <script>
-import "videojs-contrib-hls";
+// import "videojs-contrib-hls";
 import { reactive, toRefs, onMounted, toRaw, ref, watch, nextTick } from "vue";
 import { ElMessageBox } from "element-plus";
 import Header from "./Header.vue";
@@ -359,6 +359,11 @@ export default {
     const domlist = ref([]);
     const num = ref(1);
     const state = reactive({
+      // bgImg: new URL('../assets/imgs/bg.jpg', import.meta.url).href,
+      // listImg: new URL('../assets/imgs/list.png', import.meta.url).href,
+      // btnDefault: new URL('../assets/imgs/btn-default.png', import.meta.url).href,
+      // videoImg: new URL('../assets/imgs/video-bg.png', import.meta.url).href,
+      // selctImg: new URL('../assets/imgs/select-video.png', import.meta.url).href,
       bgImg: require("@/assets/imgs/bg.jpg"),
       listImg: require("@/assets/imgs/list.png"),
       btnDefault: require("@/assets/imgs/btn-default.png"),

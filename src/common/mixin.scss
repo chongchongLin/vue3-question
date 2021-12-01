@@ -2,11 +2,11 @@ $blue: #3190e8;
 $bc: #e4e4e4;
 $fc:#fff;
 // 背景图片地址和大小
-@mixin bg($url) {
-    background-image: url($url);
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-}
+// @mixin bg($url) {
+//     background-image: url($url);
+//     background-repeat: no-repeat;
+//     background-size: 100% 100%;
+// }
 
 @mixin borderRadius($radius) {
     -webkit-border-radius: $radius;
