@@ -55,6 +55,11 @@ export default {
           name: "金铲铲",
           id: 6,
         },
+        {
+          path: "/color-convert",
+          name: "色值转换",
+          id: 7,
+        },
       ],
     });
     const showComponent = (pathCtn) => {

@@ -95,6 +95,16 @@ const router = createRouter({
         isHeader:false,
         index: 1,
       },
+    },
+    {
+      path: '/color-convert',
+      name: "convertColor",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/components/ConvertColor.vue"),
+      meta: {
+        isHeader:true,
+        index: 1,
+      },
     }
   ],
 });
