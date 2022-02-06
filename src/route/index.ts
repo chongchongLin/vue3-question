@@ -20,6 +20,18 @@ const router = createRouter({
       },
     },
     {
+      path: "/articleList",
+      name: "articleList",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/views/ArticleList.vue"),
+      meta: {
+        title: '文章列表页',
+        index: 1,
+        isHeader:true,
+
+      },
+    },
+    {
       path: "/gold-chan-chan",
       name: "gold",
       component: () =>

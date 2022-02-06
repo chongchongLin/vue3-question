@@ -1,6 +1,7 @@
 <template>
   <div class="header-container">
     <span class="title" @click="returnHome()">技术改变生活</span>
+    <span class="article-title" @click="jumpPage('ArticleList')">个人文章</span>
     <div class="tag">
       <a href="https://github.com/chongchongLin">
         <svg class="icon" aria-hidden="true">
@@ -21,8 +22,12 @@ export default {
     const returnHome = () => {
       router.push({ path: "./home" });
     };
+    const jumpPage = (path)=>{
+      router.push({ path: `./${path}` });
+    }
     return {
       returnHome,
+      jumpPage
     };
   },
 };
@@ -45,6 +50,14 @@ export default {
 .title {
   color: #999;
   cursor: pointer;
+}
+.article-title{
+   color: #999;
+  cursor: pointer;
+  margin: 0 16px;
+}
+.article-title:hover,.title:hover{
+  color: #000;
 }
 .tag {
   display: flex;
