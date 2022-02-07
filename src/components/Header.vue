@@ -1,7 +1,7 @@
 <template>
   <div class="header-container">
     <span class="title" @click="returnHome()">技术改变生活</span>
-    <span class="article-title" @click="jumpPage('ArticleList')">个人文章</span>
+    <span class="article-title" @click="jumpPage('articleList')">个人文章</span>
     <div class="tag">
       <a href="https://github.com/chongchongLin">
         <svg class="icon" aria-hidden="true">

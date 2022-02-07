@@ -32,6 +32,18 @@ const router = createRouter({
       },
     },
     {
+      path: "/articleDetail",
+      name: "articleDetail",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/views/ArticleDetail.vue"),
+      meta: {
+        title: '文章详情页',
+        index: 1,
+        isHeader:true,
+
+      },
+    },
+    {
       path: "/gold-chan-chan",
       name: "gold",
       component: () =>
