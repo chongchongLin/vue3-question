@@ -1,4 +1,8 @@
-import { createRouter, createWebHashHistory, createWebHistory } from "vue-router";
+import {
+  createRouter,
+  createWebHashHistory,
+  createWebHistory,
+} from "vue-router";
 
 const router = createRouter({
   history: createWebHistory(), // hash模式：createWebHashHistory，history模式：createWebHistory
@@ -13,10 +17,9 @@ const router = createRouter({
       component: () =>
         import(/* webpackChunkName: "home" */ "@/views/Home.vue"),
       meta: {
-        title: '首页',
+        title: "首页",
         index: 1,
-        isHeader:true,
-
+        isHeader: true,
       },
     },
     {
@@ -25,10 +28,9 @@ const router = createRouter({
       component: () =>
         import(/* webpackChunkName: "home" */ "@/views/ArticleList.vue"),
       meta: {
-        title: '文章列表页',
+        title: "文章列表页",
         index: 1,
-        isHeader:true,
-
+        isHeader: true,
       },
     },
     {
@@ -37,10 +39,9 @@ const router = createRouter({
       component: () =>
         import(/* webpackChunkName: "home" */ "@/views/ArticleDetail.vue"),
       meta: {
-        title: '文章详情页',
+        title: "文章详情页",
         index: 1,
-        isHeader:true,
-
+        isHeader: true,
       },
     },
     {
@@ -49,10 +50,9 @@ const router = createRouter({
       component: () =>
         import(/* webpackChunkName: "gold" */ "@/views/Gold.vue"),
       meta: {
-        title: '金铲铲',
+        title: "金铲铲",
         index: 1,
-        isHeader:true,
-
+        isHeader: true,
       },
     },
     {
@@ -61,10 +61,9 @@ const router = createRouter({
       component: () =>
         import(/* webpackChunkName: "wage" */ "@/components/Wage.vue"),
       meta: {
-        title: '工资计算器',
+        title: "工资计算器",
         index: 1,
-        isHeader:true,
-
+        isHeader: true,
       },
     },
     {
@@ -74,19 +73,19 @@ const router = createRouter({
         import(/* webpackChunkName: "monitor" */ "@/components/Monitor.vue"),
       meta: {
         index: 1,
-        isHeader:true,
-
+        isHeader: true,
       },
     },
     {
       path: "/verify-code",
       name: "verify-code",
       component: () =>
-        import(/* webpackChunkName: "verify-code" */ "@/components/VerifyCode.vue"),
+        import(
+          /* webpackChunkName: "verify-code" */ "@/components/VerifyCode.vue"
+        ),
       meta: {
         index: 1,
-        isHeader:true,
-
+        isHeader: true,
       },
     },
     {
@@ -96,8 +95,7 @@ const router = createRouter({
         import(/* webpackChunkName: "home" */ "@/components/Grid.vue"),
       meta: {
         index: 1,
-        isHeader:true,
-
+        isHeader: true,
       },
     },
     {
@@ -107,29 +105,29 @@ const router = createRouter({
         import(/* webpackChunkName: "home" */ "@/components/Flex.vue"),
       meta: {
         index: 1,
-        isHeader:true,
+        isHeader: true,
       },
     },
     {
-      path: '/scale-layout',
-      name: "scaleLayout",
-      component: () =>
-        import(/* webpackChunkName: "home" */ "@/components/ScaleLayout.vue"),
-      meta: {
-        isHeader:false,
-        index: 1,
-      },
-    },
-    {
-      path: '/color-convert',
+      path: "/color-convert",
       name: "convertColor",
       component: () =>
         import(/* webpackChunkName: "home" */ "@/components/ConvertColor.vue"),
       meta: {
-        isHeader:true,
+        isHeader: true,
         index: 1,
       },
-    }
+    },
+    {
+      path: "/card-game",
+      name: "cardGame",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/views/CardGame.vue"),
+      meta: {
+        isHeader: true,
+        index: 1,
+      },
+    },
   ],
 });
 router.beforeEach((to, from, next) => {
