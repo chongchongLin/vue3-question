@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { reactive, onMounted, toRefs, nextTick } from "vue";
+import { reactive, toRefs } from "vue";
 import { useRouter } from "vue-router";
 export default {
   name: "home",
@@ -41,24 +41,19 @@ export default {
           id: 3,
         },
         {
-          path: "/flex",
-          name: "flex宫格",
-          id: 4,
-        },
-        {
-          path: "/scale-layout",
-          name: "比例宫格",
-          id: 5,
-        },
-        {
           path: "/gold-chan-chan",
           name: "金铲铲",
-          id: 6,
+          id: 4,
         },
         {
           path: "/color-convert",
           name: "色值转换",
-          id: 7,
+          id: 5,
+        },
+        {
+          path: "/card-game",
+          name: "纸牌游戏",
+          id: 6,
         },
       ],
     });
