@@ -61,15 +61,16 @@ export default defineComponent({
       if (reg.test(color)) {
         let strHex = "#";
         // 把RGB的3个数值变成数组
-        let colorArr = color.replace(/(?:\(|\)|rgba|RGBA)*/g, "").split(",");
+        let colorArr:any = color.replace(/(?:\(|\)|rgba|RGBA)*/g, "").split(",");
         // 转成16进制
-        for (let i = 0; i < colorArr.length; i++) {
+        for (let i = 0; i < colorArr.length-1; i++) {
           let hex = Number(colorArr[i]).toString(16);
           if (hex === "0") {
             hex += hex;
           }
           strHex += hex;
         }
+        strHex = `${strHex},${colorArr[3]*100}%`
         state.hexadecimalVal = strHex;
       }
     };

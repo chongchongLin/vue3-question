@@ -13,28 +13,10 @@ import dotenv from 'dotenv'
 try {
     const VITE_NODE_ENV = process.env.VITE_NODE_ENV;
     const envLocalSuffix = VITE_NODE_ENV === 'dev' ? '.local' : '';
-    // const file = dotenv.parse(fs.readFileSync(`./.env.${VITE_NODE_ENV}${envLocalSuffix}`), {
-    //     debug: true
-    // });
-    // for (const key in file) {
-    //     process.env[key] = file[key]
-    // }
 } catch (e) {
     console.error('error999999999', e)
 }
-// try {
-//     // 根据环境变量加载环境变量文件
-//     const VITE_NODE_ENV = process.env.VITE_NODE_ENV
-//     const envLocalSuffix = VITE_NODE_ENV === 'dev' ? '.local' : ''
-//     const file = dotenv.parse(fs.readFileSync(`./.env.${VITE_NODE_ENV}${envLocalSuffix}`), {
-//         debug: true
-//     })
-//     for (const key in file) {
-//         process.env[key] = file[key]
-//     }
-// } catch (e) {
-//     console.error('error999999999', e)
-// }​
+
 const resolve = (dir) => {
     return path.join(__dirname, './', dir)
 }
