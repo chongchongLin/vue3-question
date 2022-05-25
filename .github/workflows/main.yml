@@ -15,9 +15,9 @@ jobs:
       run: |
         npm install
         npm run build
-    - name: Deploy
-      uses: JamesIves/github-pages-deploy-action@releases/v3
-      with:
-        ACCESS_TOKEN: ${{ secrets.ACTIONTOKEN }}
-        BRANCH: gh-pages
-        FOLDER: build
+    # - name: Deploy
+    #   uses: JamesIves/github-pages-deploy-action@releases/v3
+    #   with:
+    #     ACCESS_TOKEN: ${{ secrets.ACTIONTOKEN }}
+    #     BRANCH: gh-pages
+    #     FOLDER: build
