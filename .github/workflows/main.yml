@@ -13,6 +13,7 @@ jobs:
         persist-credentials: false
     - name: Install and Build
       run: |
+        npm config delete proxy
         npm install
         npm run build
     # - name: Deploy
