@@ -73,20 +73,24 @@ module.exports = {
             ...devWebPackConfig
         }
     },
-    devServer: {
-        disableHostCheck: true,
-        port: 8080,
-        proxy: {
-            "/api": {
-                target: "https://nebula.handsmap.cn/appproxy/gateway/",
-                ws: false,
-                //将主机头的原点改为目标的url地址
-                changeOrgin: true,
-                pathRewrite: {
-                    "^/api": "",
-                },
-            },
-        },
-    },
+    // devServer: {
+    //     disableHostCheck: true,
+    //     port: 8080,
+    //     proxy: {
+    //         "/api": {
+    //             target: "https://nebula.handsmap.cn/appproxy/gateway/",
+    //             ws: false,
+    //             //将主机头的原点改为目标的url地址
+    //             changeOrgin: true,
+    //             pathRewrite: {
+    //                 "^/api": "",
+    //             },
+    //         },
+    //     },
+    // },
+    outputDir: 'dist',
+    publicPath: process.env.NODE_ENV === 'production' ?
+        '/vue3-question/' :
+        '/',
     lintOnSave: false
 }
