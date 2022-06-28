@@ -94,6 +94,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import "./common/mixin.scss";
 @import "./common/media.css";
 html,
 body {

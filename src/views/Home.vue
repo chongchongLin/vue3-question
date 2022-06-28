@@ -55,6 +55,11 @@ export default {
           name: "纸牌游戏",
           id: 6,
         },
+        {
+          path: "/auto-report",
+          name: "自动化报告",
+          id: 6,
+        },
       ],
     });
     const showComponent = (pathCtn) => {
