@@ -44,7 +44,7 @@ import {
   fourFreeHeros,
   fiveFreeHeros,
 } from "@/common/gold.js";
-import { reactive, onMounted, toRefs, nextTick } from "vue";
+import { reactive, onMounted, toRefs } from "vue";
 export default {
   setup() {
     const state = reactive({

@@ -5,7 +5,7 @@ import {
 } from "vue-router";
 
 const router = createRouter({
-  history: createWebHistory(), // hash模式：createWebHashHistory，history模式：createWebHistory
+  history: createWebHashHistory(), // hash模式：createWebHashHistory，history模式：createWebHistory
   routes: [
     {
       path: "/",
@@ -125,6 +125,16 @@ const router = createRouter({
         import(/* webpackChunkName: "home" */ "@/views/CardGame.vue"),
       meta: {
         isHeader: true,
+        index: 1,
+      },
+    },
+    {
+      path: "/auto-report",
+      name: "autoReport",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/views/AutoReport.vue"),
+      meta: {
+        isHeader: false,
         index: 1,
       },
     },
