@@ -72,13 +72,11 @@ const options = [
       },
       {
         name: "景区停车位模板",
-        url:
-          "https://handsmap-oss-spt.oss-cn-hangzhou.aliyuncs.com/resourceIvestigation/logo/91eacc5eb9c24cc282716817add5f14b.png",
+        url: "",
       },
       {
         name: "景区监控模板",
-        url:
-          "https://handsmap-oss-spt.oss-cn-hangzhou.aliyuncs.com/resourceIvestigation/logo/91eacc5eb9c24cc282716817add5f14b.png",
+        url: "",
       },
     ],
   },
@@ -87,8 +85,7 @@ const options = [
     templeteList: [
       {
         name: "违纪模板",
-        url:
-          "https://handsmap-oss-spt.oss-cn-hangzhou.aliyuncs.com/resourceIvestigation/logo/91eacc5eb9c24cc282716817add5f14b.png",
+        url: "",
       },
       {
         name: "违法数量模板",
@@ -113,7 +110,6 @@ const changeSelect = (index) => {
   picList.value = targetList.templeteList.map((item) => item.url);
 
   console.log("picList", picList.value);
-
 };
 //选择模板
 const selectTmp = (targetIndex) => {
