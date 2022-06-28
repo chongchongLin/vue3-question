@@ -89,5 +89,6 @@ module.exports = {
     //     },
     // },
     outputDir: 'dist',
-    publicPath: './'
+    publicPath: './',
+    lintOnSave: false
 }
