@@ -24,7 +24,7 @@
         </div>
       </div>
     </div>
-    <div class="right-list-container">
+    <div class="right-list-container bg-img" v-if="isShow">
       <div
         class="menu-item-container"
         v-for="(item, index) in menuList"
@@ -38,6 +38,38 @@
           <div class="bg-img-container">
             <img src="../assets/imgs/index-screen/max_right_top.png" alt="" />
           </div>
+        </div>
+        <div class="max-width-item second-menu" v-if="(index + 1) % 4 == 2">
+          <div class="bg-img-container">
+            <img
+              src="../assets/imgs/index-screen/second_right_top.png"
+              alt=""
+            />
+          </div>
+        </div>
+        <div class="max-width-item third-menu" v-if="(index + 1) % 4 == 3">
+          <div class="bg-img-container">
+            <img src="../assets/imgs/index-screen/third_right_top.png" alt="" />
+          </div>
+        </div>
+        <div class="max-width-item four-menu" v-if="(index + 1) % 4 === 0">
+          <div class="bg-img-container">
+            <img src="../assets/imgs/index-screen/four_right_top.png" alt="" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="right-list-container content">
+      <div
+        class="menu-item-container"
+        v-for="(item, index) in menuList"
+        :key="index"
+      >
+        <div
+          class="max-width-item"
+          v-if="(index + 1) % 4 == 1"
+          :style="{ transform: listTransform, transition: listTransition }"
+        >
           <div
             class="menu-logo-container"
             :style="{ transform: itemTransform, transition: itemTransition }"
@@ -52,12 +84,6 @@
           <div class="menu-name">{{ item.name }}</div>
         </div>
         <div class="max-width-item second-menu" v-if="(index + 1) % 4 == 2">
-          <div class="bg-img-container">
-            <img
-              src="../assets/imgs/index-screen/second_right_top.png"
-              alt=""
-            />
-          </div>
           <div class="menu-logo-container">
             <div class="logo-top">
               <img src="../assets/imgs/index-screen/sskl.svg" alt="" />
@@ -69,9 +95,6 @@
           <div class="menu-name">{{ item.name }}</div>
         </div>
         <div class="max-width-item third-menu" v-if="(index + 1) % 4 == 3">
-          <div class="bg-img-container">
-            <img src="../assets/imgs/index-screen/third_right_top.png" alt="" />
-          </div>
           <div class="menu-logo-container">
             <div class="logo-top">
               <img src="../assets/imgs/index-screen/sskl.svg" alt="" />
@@ -83,9 +106,6 @@
           <div class="menu-name">{{ item.name }}</div>
         </div>
         <div class="max-width-item four-menu" v-if="(index + 1) % 4 === 0">
-          <div class="bg-img-container">
-            <img src="../assets/imgs/index-screen/four_right_top.png" alt="" />
-          </div>
           <div class="menu-logo-container">
             <div class="logo-top">
               <img src="../assets/imgs/index-screen/sskl.svg" alt="" />
@@ -103,6 +123,7 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+const isShow = ref(false);
 let listTransition = ref("");
 let listTransform = ref("");
 let itemTransition = ref("");
@@ -125,34 +146,34 @@ const scrollMenu = () => {
   // console.log("menuList", menuList);
   // listTransform.value = "translate(55px,173px)";
   index++;
-      let demo = 3;
-      listTransform.value = `translateY(${demo * 173}px)`;
-      listTransition.value = "all 2s linear";
+  // let demo = 3;
+  // listTransform.value = `translateY(${demo * 173}px)`;
+  // listTransition.value = "all 2s linear";
+  // itemTransform.value = `translateX(0px)`;
+  // itemTransition.value = "all 0.5s linear";
+  switch (index) {
+    case 1:
+      listTransform.value = `translateY(${index * 173}px)`;
+      listTransition.value = "all 0.5s linear";
+
+      itemTransform.value = `translateX(${index * 55}px)`;
+      itemTransition.value = "all 0.5s linear";
+      break;
+    case 2:
+      listTransform.value = `translateY(${index * 173}px)`;
+      listTransition.value = "all 0.5s linear";
+      itemTransform.value = `translateX(50px)`;
+      itemTransition.value = "all 0.5s linear";
+      break;
+    case 3:
+      listTransform.value = `translateY(${index * 173}px)`;
+      listTransition.value = "all 0.5s linear";
       itemTransform.value = `translateX(0px)`;
       itemTransition.value = "all 0.5s linear";
-  // switch (index) {
-  //   case 1:
-  //     listTransform.value = `translateY(${index * 173}px)`;
-  //     listTransition.value = "all 0.5s linear";
-
-  //     itemTransform.value = `translateX(${index * 55}px)`;
-  //     itemTransition.value = "all 0.5s linear";
-  //     break;
-  //   case 2:
-  //     listTransform.value = `translateY(${index * 173}px)`;
-  //     listTransition.value = "all 0.5s linear";
-  //     itemTransform.value = `translateX(50px)`;
-  //     itemTransition.value = "all 0.5s linear";
-  //     break;
-  //   case 3:
-  //     listTransform.value = `translateY(${index * 173}px)`;
-  //     listTransition.value = "all 0.5s linear";
-  //     itemTransform.value = `translateX(0px)`;
-  //     itemTransition.value = "all 0.5s linear";
-  //     break;
-  //   default:
-  //     break;
-  // }
+      break;
+    default:
+      break;
+  }
 };
 const autoScrool = () => {
   // setInterval(() => {
@@ -164,7 +185,7 @@ onMounted(() => {
 });
 </script>
 
-<style lang='scss' scoped >
+<style lang="scss" scoped>
 img {
   width: 100%;
   height: 100%;
@@ -274,7 +295,8 @@ img {
   position: absolute;
   right: 164px;
   overflow: hidden;
-  transition: 0.5s all cubic-bezier(0.14, -1.33, 1, 0.18);
+  border: 1px solid red;
+  // transition: 0.5s all cubic-bezier(0.14, -1.33, 1, 0.18);
 
   .menu-item-container:last-child {
     margin-bottom: 0px;
@@ -285,6 +307,7 @@ img {
   margin-bottom: 18px;
   justify-content: flex-end;
   display: flex;
+  // animation: runX 2s  infinite cubic-bezier(0.66, 0.01, 1, 1) forwards;
 
   .max-width-item {
     width: 696px;
@@ -292,7 +315,8 @@ img {
     display: flex;
     align-items: center;
     position: relative;
-    transition: 0.5s all cubic-bezier(0.14, -1.33, 1, 0.18);
+    // position: absolute;
+    // animation: runY 2s infinite cubic-bezier(0, 0, 0.36, 1) forwards;
 
     .bg-img-container {
       width: 100%;
@@ -344,5 +368,29 @@ img {
   }
 }
 .four-menu {
+}
+
+@keyframes runX {
+  0% {
+    transform: translateX(0px);
+  }
+  50% {
+    transform: translateX(50px);
+  }
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes runY {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(280px);
+  }
+  100% {
+    transform: translateY(560px);
+  }
 }
 </style>
