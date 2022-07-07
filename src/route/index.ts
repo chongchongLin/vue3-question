@@ -138,6 +138,16 @@ const router = createRouter({
         index: 1,
       },
     },
+    {
+      path: "/Index-screen",
+      name: "IndexScreen",
+      component: () =>
+        import(/* webpackChunkName: "home" */ "@/views/IndexScreen.vue"),
+      meta: {
+        isHeader: false,
+        index: 1,
+      },
+    },
   ],
 });
 router.beforeEach((to, from, next) => {

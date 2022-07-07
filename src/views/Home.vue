@@ -60,6 +60,11 @@ export default {
           name: "自动化报告",
           id: 6,
         },
+        {
+          path: "/index-screen",
+          name: "首页大屏demo",
+          id: 6,
+        },
       ],
     });
     const showComponent = (pathCtn) => {
